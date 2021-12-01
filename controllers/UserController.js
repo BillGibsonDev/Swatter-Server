@@ -8,12 +8,15 @@ import { createTokens, validateToken } from "../JWT.js";
 const router = express.Router();
 
 export const createUser = async (req, res) => {
-    const { username, password, role } = req.body;
+    const { username, password, role, userRole } = req.body;
+
+    if(role !== process.env.NODE_ENV_ADMIN_SECRET)
+
     bcrypt.hash(password, 10).then((hash) => {
       UserModel.create({
         username: username,
         password: hash,
-        role: role,
+        role: userRole,
       })
         .then(() => {
           res.json("USER REGISTERED");
