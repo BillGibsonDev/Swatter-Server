@@ -60,21 +60,23 @@ export const createUser = async (req, res) => {
 
 // not tested \0/
 export const updateUser = async (req, res) =>{
-    const { username, password, newpassword} = req.body;
+    const { username, password, role, newpassword} = req.body;
 
-    const userPassword = user.password;
-    bcrypt.compare(password, userPassword).then((match) => {
-      if (!match) {
-        res
-          .status(400)
-          .json({ error: "Wrong Username or Password!" });
-      } else {
-
-      UserModel.findOneAndUpdate({username: username },{password: newpassword});
-        
-        res.json("User Updated");
-      }
-    });
+    if(role !== process.env.NODE_ENV_ADMIN_SECRET || role !== process.env.NODE_ENV_USER_SECRET ){
+      res.json("You do not have permission");
+    } else {
+      const userPassword = user.password;
+      bcrypt.compare(password, userPassword).then((match) => {
+        if (!match) {
+          res
+            .status(400)
+            .json({ error: "Wrong Username or Password!" });
+        } else {
+          UserModel.findOneAndUpdate({username: username },{password: newpassword});
+          res.json("User Updated");
+        }
+      });
+    }
   };
 
 
