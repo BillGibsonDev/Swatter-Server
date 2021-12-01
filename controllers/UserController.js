@@ -10,23 +10,25 @@ const router = express.Router();
 export const createUser = async (req, res) => {
     const { username, password, role, userRole } = req.body;
 
-    if(role !== process.env.NODE_ENV_ADMIN_SECRET)
-
-    bcrypt.hash(password, 10).then((hash) => {
-      UserModel.create({
-        username: username,
-        password: hash,
-        role: userRole,
-      })
-        .then(() => {
-          res.json("USER REGISTERED");
+    if(role !== process.env.NODE_ENV_ADMIN_SECRET){
+      res.json("You do not have permission");
+    } else {
+      bcrypt.hash(password, 10).then((hash) => {
+        UserModel.create({
+          username: username,
+          password: hash,
+          role: userRole,
         })
-        .catch((err) => {
-          if (err) {
-            res.status(400).json({ error: err });
-          }
-        });
-    });
+          .then(() => {
+            res.json("USER REGISTERED");
+          })
+          .catch((err) => {
+            if (err) {
+              res.status(400).json({ error: err });
+            }
+          });
+      });
+    }
   };
 
 
