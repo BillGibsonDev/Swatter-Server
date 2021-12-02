@@ -18,13 +18,9 @@ export const getBug = async (req, res) => {
 }
 
 export const createBug = async (req, res) => {
-    const { title, date, author, description, status, priority, thumbnail, tag, lastUpdate, role } = req.body;
+    const { title, date, author, description, status, priority, thumbnail, tag, lastUpdate } = req.body;
     const { projectId } = req.params;
 
-
-     if(role !== process.env.NODE_ENV_ADMIN_SECRET || role !== process.env.NODE_ENV_USER_SECRET ){
-      res.json("You do not have permission");
-    } else {
         const newBug = new ProjectModel({ title, date, author, description, status, priority, thumbnail, tag, lastUpdate })
         try {
             await ProjectModel.findOneAndUpdate({ _id: projectId },
@@ -48,53 +44,41 @@ export const createBug = async (req, res) => {
         } catch (error) {
             res.status(409).json({ message: error.message });
         }
-    }
 }
 
 export const updateBug = async (req, res) => {
     const { projectId, bugId } = req.params;
-    const { description, status, priority, tag, lastUpdate, role } = req.body;
+    const { description, status, priority, tag, lastUpdate } = req.body;
     
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
 
     const updatedBug = { description, status, priority, tag, lastUpdate };
 
-    if(role !== process.env.NODE_ENV_ADMIN_SECRET || role !== process.env.NODE_ENV_USER_SECRET ){
-      res.json("You do not have permission");
-    } else {
-        await ProjectModel.findOneAndUpdate(
-            { "_id": projectId, "bugs._id": bugId },
-            {
-                $set:{
-                    "bugs.$.description": description,
-                    "bugs.$.status": status,
-                    "bugs.$.priority": priority,
-                    "bugs.$.tag": tag,
-                    "bugs.$.lastUpdate": lastUpdate,
-                }
-            },
-        );
-        res.json("Bug Updated");
-    }
-};
+    await ProjectModel.findOneAndUpdate(
+        { "_id": projectId, "bugs._id": bugId },
+        {
+            $set:{
+                "bugs.$.description": description,
+                "bugs.$.status": status,
+                "bugs.$.priority": priority,
+                "bugs.$.tag": tag,
+                "bugs.$.lastUpdate": lastUpdate,
+            }
+        },
+    );
+    res.json("Bug Updated");
+}
 
 
 export const deleteBug = async (req, res) => {
 
     const { projectId, bugId } = req.params;
 
-    const { role } = req.body;
-
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
-
-    if(role !== process.env.NODE_ENV_ADMIN_SECRET || role !== process.env.NODE_ENV_USER_SECRET ){
-      res.json("You do not have permission");
-    } else {
         await ProjectModel.findOneAndUpdate(
             { _id: projectId },
             { $pull: { 'bugs': { _id: bugId } } },
             { multi: true }
         )
-        res.json("Bug Deleted");
-    }
+    res.json("Bug Deleted");
 }
