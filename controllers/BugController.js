@@ -31,15 +31,15 @@ export const createBug = async (req, res) => {
                 {
                 '$push': {
                     'bugs': {  
-                    title,
-                    description, 
-                    date,
-                    thumbnail,
-                    status, 
-                    author,
-                    priority,
-                    tag,
-                    lastUpdate
+                        title,
+                        description, 
+                        date,
+                        thumbnail,
+                        status, 
+                        author,
+                        priority,
+                        tag,
+                        lastUpdate
                     }
                 }
             })
