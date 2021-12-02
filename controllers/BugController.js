@@ -78,6 +78,7 @@ export const updateBug = async (req, res) => {
     }
 };
 
+
 export const deleteBug = async (req, res) => {
 
     const { projectId, bugId } = req.params;
