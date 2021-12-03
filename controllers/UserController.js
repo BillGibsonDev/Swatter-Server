@@ -37,14 +37,13 @@ export const createUser = async (req, res) => {
 
     const user = await UserModel.findOneAndUpdate({username: username },{lastLogin: lastLogin});
   
-    if (!user) res.status(400).json({ error: "User Doesn't Exist" });
+    if (!user) res.json("Wrong Username or Password!");
   
     const userPassword = user.password;
     bcrypt.compare(password, userPassword).then((match) => {
       if (!match) {
         res
-          .status(400)
-          .json({ error: "Wrong Username or Password!" });
+          .json("Wrong Username or Password!");
       } else {
         const accessToken = createTokens(user);
 
