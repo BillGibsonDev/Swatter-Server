@@ -21,7 +21,7 @@ router.post(`/${process.env.NODE_ENV_ROLE_CONFIRM_URL}`, confirmRole);
 
 // update
 router.post(`/${process.env.NODE_ENV_UPDATE_BUG_URL}/:projectId/:bugId`, updateBug);
-router.post(`/${process.env.NODE_ENV_UPDATE_USER_URL}/:projectId/:bugId`, updateUser);
+router.post(`/${process.env.NODE_ENV_UPDATE_USER_URL}`, updateUser);
 
 // create
 router.post(`/${process.env.NODE_ENV_ADD_PROJECT_URL}`, createProject);
