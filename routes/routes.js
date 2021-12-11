@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 import { deleteComment, createComment } from '../controllers/CommentController.js';
 import { createBug, getBug, deleteBug, updateBug } from '../controllers/BugController.js';
-import { getProjects, getProject, deleteProject, createProject } from '../controllers/ProjectController.js';
+import { getProjects, getProject, deleteProject, createProject, editProject } from '../controllers/ProjectController.js';
 import { confirmAdmin, confirmRole, createUser, getRole, loginUser, updateUser } from '../controllers/UserController.js';
 import { validateToken } from '../JWT.js';
 
@@ -20,6 +20,7 @@ router.post(`/${process.env.NODE_ENV_ADMIN_CONFIRM_URL}`, confirmAdmin);
 router.post(`/${process.env.NODE_ENV_ROLE_CONFIRM_URL}`, confirmRole);
 
 // update
+router.post(`/${process.env.NODE_ENV_UPDATE_PROJECT_URL}/:projectId`, editProject);
 router.post(`/${process.env.NODE_ENV_UPDATE_BUG_URL}/:projectId/:bugId`, updateBug);
 router.post(`/${process.env.NODE_ENV_UPDATE_USER_URL}`, updateUser);
 
