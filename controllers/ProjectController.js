@@ -47,11 +47,11 @@ export const editProject = async (req, res) => {
         { "_id": projectId },
         {
             $set:{
-                "project.$.projectTitle": projectTitle,
-                "project.$.startDate": startDate,
-                "project.$.author": author,
-                "project.$.projectImage": projectImage,
-                "project.$.projectLink": projectLink,
+                projectTitle: projectTitle,
+                startDate: startDate,
+                author: author,
+                projectImage: projectImage,
+                projectLink: projectLink,
             }
         },
         {new: true}
