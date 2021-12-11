@@ -27,17 +27,36 @@ export const getProject = async (req, res) => {
 }
 
 export const createProject = async (req, res) => {
-    const { projectTitle, startDate, author } = req.body;
+    const { projectTitle, startDate, author, projectImage, projectLink } = req.body;
 
-    const newProject = new ProjectModel({ projectTitle, startDate, author })
+    const newProject = new ProjectModel({ projectTitle, startDate, author, projectImage, projectLink })
     try {
         await newProject.save();
 
         res.status(201).json("Project Created");
     } catch (error) {
         res.status(409).json({ message: error.message });
-    }
-    
+    }   
+}
+
+export const editProject = async (req, res) => {
+    const { projectId } = req.params;
+    const { projectTitle, startDate, author, projectImage, projectLink} = req.body;
+
+    await ProjectModel.findOneAndUpdate(
+        { "_id": projectId },
+        {
+            $set:{
+                "project.$.projectTitle": projectTitle,
+                "project.$.startDate": startDate,
+                "project.$.author": author,
+                "project.$.projectImage": projectImage,
+                "project.$.projectLink": projectLink,
+            }
+        },
+        {new: true}
+    );
+    res.json("Project Updated");
 }
 
 export const deleteProject = async (req, res) => {

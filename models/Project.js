@@ -29,8 +29,8 @@ const ProjectSchema = new mongoose.Schema({
     projectTitle: String,
     startDate: String,
     author: String,
-    backgroundColor: String,
-    fontColor: String,
+    projectImage: String,
+    projectLink: String,
     
    bugs: [{ type: BugSchema, ref: "bugs" }],
    comments: [{ type: CommentSchema, ref: "comments" }],
