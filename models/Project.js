@@ -21,7 +21,9 @@ const BugSchema = new mongoose.Schema({
     title:  String,
     description: String,
     date: String,
-    lastUpdate: String,
+    time: String,
+    lastUpdateTime: String,
+    lastUpdateDate: String,
     thumbnail: String,
     images: [ ImagesSchema ],
     status: String,
@@ -36,6 +38,7 @@ export const BugModel = mongoose.model("Bug", BugSchema)
 const CommentSchema = new mongoose.Schema({
     comment: String,
     date: String,
+    time: String,
     author: String,
     avatar: String,
 })
