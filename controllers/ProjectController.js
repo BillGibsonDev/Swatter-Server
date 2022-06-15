@@ -27,9 +27,9 @@ export const getProject = async (req, res) => {
 }
 
 export const createProject = async (req, res) => {
-    const { projectTitle, startDate, author, projectImage, projectLink } = req.body;
+    const { projectTitle, author, projectImage, projectLink } = req.body;
 
-    const newProject = new ProjectModel({ projectTitle, startDate, author, projectImage, projectLink })
+    const newProject = new ProjectModel({ projectTitle, author, projectImage, projectLink })
     try {
         await newProject.save();
 
