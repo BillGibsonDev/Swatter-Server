@@ -8,8 +8,15 @@ export const getBug = async (req, res) => {
     const { projectId, bugId } = req.params;
 
     try {
-        const bug = await ProjectModel.find({ bugs: {$elemMatch: { _id: bugId}}},
-            { bugs: {$elemMatch: { _id: bugId}}})
+        const bug = await ProjectModel.find({ 
+            bugs: {
+                $elemMatch: { _id: bugId}}},
+            { 
+                bugs:{ 
+                    $elemMatch: { _id: bugId }
+                }
+            }
+        )
         
         res.status(200).json(bug);
     } catch (error) {
@@ -20,26 +27,24 @@ export const getBug = async (req, res) => {
 export const createBug = async (req, res) => {
     const { title, date, author, description, status, priority, thumbnail, tag, lastUpdate } = req.body;
     const { projectId } = req.params;
-
-        const newBug = new ProjectModel({ title, date, author, description, status, priority, thumbnail, tag, lastUpdate })
-        try {
-            await ProjectModel.findOneAndUpdate({ _id: projectId },
-                {
-                '$push': {
-                    'bugs': {  
-                        title,
-                        description, 
-                        date,
-                        thumbnail,
-                        status, 
-                        author,
-                        priority,
-                        tag,
-                        lastUpdate
-                    }
+    
+    try {
+        await ProjectModel.findOneAndUpdate({ _id: projectId },
+            {
+            '$push': {
+                'bugs': {  
+                    title,
+                    description, 
+                    date,
+                    thumbnail,
+                    status, 
+                    author,
+                    priority,
+                    tag,
+                    lastUpdate
                 }
-            })
-
+            }
+        })
             res.status(201).json("Bug Created");
         } catch (error) {
             res.status(409).json({ message: error.message });
