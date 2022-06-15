@@ -39,7 +39,7 @@ const CommentSchema = new mongoose.Schema({
 
 const ScheduleSchema = new mongoose.Schema({
     title: String,
-    startDate: String,
+    startDate: { type: Date, default: Date.now },
     endDate: String,
 })
 
