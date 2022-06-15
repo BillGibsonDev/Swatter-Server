@@ -31,7 +31,7 @@ export const createProject = async (req, res) => {
 
     const newProject = new ProjectModel({ projectTitle, startDate, author, projectImage, projectLink })
     try {
-        await newProject.push();
+        await newProject.save();
 
         res.status(201).json("Project Created");
     } catch (error) {
