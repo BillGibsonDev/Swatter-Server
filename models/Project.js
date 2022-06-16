@@ -19,6 +19,7 @@ const BugSchema = new mongoose.Schema({
     title:  String,
     description: String,
     date: String,
+    lastUpdate: String,
     thumbnail: String,
     images: [ ImagesSchema ],
     status: String,
