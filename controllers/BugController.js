@@ -35,13 +35,13 @@ export const createBug = async (req, res) => {
                 'bugs': {  
                     title,
                     description, 
-                    date: new Date(),
+                    date: new Date.now(),
                     thumbnail,
                     status, 
                     author,
                     priority,
                     tag,
-                    lastUpdate: new Date(),
+                    lastUpdate: new Date.now(),
                 }
             }
         })
