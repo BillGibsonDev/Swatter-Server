@@ -31,7 +31,7 @@ export const createBug = async (req, res) => {
                     date,
                     thumbnail,
                     status,
-                    images: [image], 
+                    images,
                     author,
                     priority,
                     tag,
