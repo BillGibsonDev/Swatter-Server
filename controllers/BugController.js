@@ -25,9 +25,9 @@ export const getBug = async (req, res) => {
 }
 
 export const createBug = async (req, res) => {
-    const { title, author, description, status, priority, thumbnail, tag } = req.body;
+    const { title, date, lastUpdate, author, description, status, priority, thumbnail, tag } = req.body;
     const { projectId } = req.params;
-    
+
     try {
         await ProjectModel.findOneAndUpdate({ _id: projectId },
             {
@@ -35,13 +35,13 @@ export const createBug = async (req, res) => {
                 'bugs': {  
                     title,
                     description, 
-                    date: new Date.now(),
+                    date,
                     thumbnail,
                     status, 
                     author,
                     priority,
                     tag,
-                    lastUpdate: new Date.now(),
+                    lastUpdate,
                 }
             }
         })
