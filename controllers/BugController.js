@@ -27,7 +27,6 @@ export const getBug = async (req, res) => {
 export const createBug = async (req, res) => {
     const { title, author, description, status, priority, thumbnail, tag } = req.body;
     const { projectId } = req.params;
-
     const currentDate = new Date();
 
     try {
@@ -55,11 +54,10 @@ export const createBug = async (req, res) => {
 
 export const updateBug = async (req, res) => {
     const { projectId, bugId } = req.params;
-    const { description, status, priority, tag, lastUpdate } = req.body;
+    const { description, status, priority, tag } = req.body;
+    const currentDate = new Date();
     
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
-
-    const updatedBug = { description, status, priority, tag, lastUpdate };
 
     await ProjectModel.findOneAndUpdate(
         { "_id": projectId, "bugs._id": bugId },
@@ -69,7 +67,7 @@ export const updateBug = async (req, res) => {
                 "bugs.$.status": status,
                 "bugs.$.priority": priority,
                 "bugs.$.tag": tag,
-                "bugs.$.lastUpdate": lastUpdate,
+                "bugs.$.lastUpdate": currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
             }
         },
     );

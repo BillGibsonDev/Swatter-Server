@@ -6,16 +6,16 @@ const router = express.Router();
 
 export const createComment = async (req, res) => {
     const { projectId } = req.params;
-    const { comment, date, author } = req.body;
-
-    const newComment = new ProjectModel({ comment, date, author })
+    const { comment, author } = req.body;
+    const currentDate = new Date();
+    
     try {
         await ProjectModel.findOneAndUpdate({ _id: projectId },
             {
             '$push': {
                 'comments': {  
                     comment, 
-                    date, 
+                    date: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }), 
                     author
                 }
             }

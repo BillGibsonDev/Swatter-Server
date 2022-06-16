@@ -33,9 +33,10 @@ export const createUser = async (req, res) => {
 
 
   export const loginUser = async (req, res) =>{
-    const { username, password, lastLogin } = req.body;
-
-    const user = await UserModel.findOneAndUpdate({username: username },{lastLogin: lastLogin});
+    const { username, password } = req.body;
+    const currentDate = new Date();
+    
+    const user = await UserModel.findOneAndUpdate({username: username },{lastLogin: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' })});
   
     if (!user) res.status(400).json({ error: "Wrong Username or Password!" });
   
