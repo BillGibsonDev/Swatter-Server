@@ -25,7 +25,7 @@ export const getBug = async (req, res) => {
 }
 
 export const createBug = async (req, res) => {
-    const { title, author, description, status, priority, thumbnail, tag, lastUpdate } = req.body;
+    const { title, author, description, status, priority, thumbnail, tag } = req.body;
     const { projectId } = req.params;
     
     try {
@@ -35,13 +35,13 @@ export const createBug = async (req, res) => {
                 'bugs': {  
                     title,
                     description, 
-                    date: new ISODate(),
+                    date: new Date(),
                     thumbnail,
                     status, 
                     author,
                     priority,
                     tag,
-                    lastUpdate
+                    lastUpdate: new Date(),
                 }
             }
         })
