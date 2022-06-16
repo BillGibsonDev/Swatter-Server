@@ -8,14 +8,13 @@ export const createComment = async (req, res) => {
     const { projectId } = req.params;
     const { comment, date, author } = req.body;
 
-    const newComment = new ProjectModel({ comment, date, author })
     try {
         await ProjectModel.findOneAndUpdate({ _id: projectId },
             {
             '$push': {
                 'comments': {  
                     comment, 
-                    date, 
+                    date,
                     author
                 }
             }

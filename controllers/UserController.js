@@ -8,7 +8,7 @@ import { createTokens, validateToken } from "../JWT.js";
 const router = express.Router();
 
 export const createUser = async (req, res) => {
-    const { username, password, role, userRole } = req.body;
+    const { username, password, role, userRole, avatar } = req.body;
 
     if(role !== process.env.NODE_ENV_ADMIN_SECRET){
       res.json("You do not have permission");
@@ -18,6 +18,7 @@ export const createUser = async (req, res) => {
           username: username,
           password: hash,
           role: userRole,
+          avatar: avatar,
         })
           .then(() => {
             res.json("USER REGISTERED");

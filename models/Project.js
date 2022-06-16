@@ -5,7 +5,6 @@ const ImagesSchema = new mongoose.Schema({
     image: String,
     label: String,
 })
-export const ImagesModel = mongoose.model("Images", ImagesSchema)
 
 const SubtaskSchema = new mongoose.Schema({
     description: String,
@@ -15,15 +14,11 @@ const SubtaskSchema = new mongoose.Schema({
     avatar: String,
     priority: String,
 })
-export const SubtaskModel = mongoose.model("Subtask", SubtaskSchema)
 
 const BugSchema = new mongoose.Schema({
     title:  String,
     description: String,
     date: String,
-    time: String,
-    lastUpdateTime: String,
-    lastUpdateDate: String,
     thumbnail: String,
     images: [ ImagesSchema ],
     status: String,
@@ -33,23 +28,19 @@ const BugSchema = new mongoose.Schema({
     flag: Boolean,
     subtasks: [ SubtaskSchema ],
 })
-export const BugModel = mongoose.model("Bug", BugSchema)
 
 const CommentSchema = new mongoose.Schema({
     comment: String,
     date: String,
-    time: String,
     author: String,
     avatar: String,
 })
-export const CommentModel = mongoose.model("Comment", CommentSchema);
 
 const ScheduleSchema = new mongoose.Schema({
     title: String,
     startDate: String,
     endDate: String,
 })
-export const ScheduleModel = mongoose.model("Schedule", ScheduleSchema);
 
 // parent
 const ProjectSchema = new mongoose.Schema({
