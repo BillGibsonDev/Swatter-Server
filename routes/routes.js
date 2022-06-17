@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { deleteComment, createComment } from '../controllers/CommentController.js';
 import { createBug, getBug, deleteBug, updateBug } from '../controllers/BugController.js';
 import { getProjects, getProject, deleteProject, createProject, editProject } from '../controllers/ProjectController.js';
-import { confirmAdmin, confirmRole, createUser, getRole, loginUser, updateUser } from '../controllers/UserController.js';
+import { confirmAdmin, confirmRole, createUser, getAvatar, getRole, loginUser, updateUser } from '../controllers/UserController.js';
 import { validateToken } from '../JWT.js';
 
 const router = express.Router();
@@ -14,6 +14,7 @@ dotenv.config();
 router.get(`/${process.env.NODE_ENV_GET_PROJECTS_URL}`, getProjects);
 router.get(`/${process.env.NODE_ENV_GET_PROJECT_URL}/:projectId`, getProject);
 router.get(`/${process.env.NODE_ENV_GET_BUG_URL}/:projectId/:bugId`, getBug);
+router.get(`/${process.env.NODE_ENV_GET_AVATAR}/:username`, getAvatar);
 router.post(`/${process.env.NODE_ENV_LOGIN_URL}`, loginUser);
 router.post(`/${process.env.NODE_ENV_SET_ROLE_URL}`, getRole);
 router.post(`/${process.env.NODE_ENV_ADMIN_CONFIRM_URL}`, confirmAdmin);

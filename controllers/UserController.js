@@ -52,11 +52,22 @@ export const createUser = async (req, res) => {
           maxAge: 60 * 60 * 24 * 30 * 1000,
           httpOnly: true,
         });
-        
+
         res.json("LOGGED IN");
       }
     });
   };
+
+export const getAvatar = async (req, res) =>{
+  const { username } = req.body;
+  
+  try {
+    const user = await UserModel.find({username: username})
+    res.status(200).json(user.avatar);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
 
 // not tested \0/
 export const updateUser = async (req, res) =>{
