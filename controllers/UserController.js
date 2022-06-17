@@ -31,7 +31,6 @@ export const createUser = async (req, res) => {
     }
   };
 
-
   export const loginUser = async (req, res) =>{
     const { username, password } = req.body;
     const currentDate = new Date();
@@ -61,60 +60,60 @@ export const createUser = async (req, res) => {
 
 // not tested \0/
 export const updateUser = async (req, res) =>{
-    const { username, password, newpassword} = req.body;
+  const { username, password, newpassword} = req.body;
 
-    const userPassword = user.password;
-    bcrypt.compare(password, userPassword).then((match) => {
-      if (!match) {
-        res
-          .status(400)
-          .json({ error: "Wrong Username or Password!" });
-      } else {
-        UserModel.findOneAndUpdate({username: username },{password: newpassword});
-        res.json("User Updated");
-      }
-    });
-  };
-
-
-  export const getRole = async (req, res) =>{
-    const { username, password } = req.body;
-
-    const user = await UserModel.findOne({username: username });
-  
-    if (!user) res.status(400).json({ error: "User Doesn't Exist" });
-  
-    const userPassword = user.password;
-    bcrypt.compare(password, userPassword).then((match) => {
-      if (!match) {
-        res
-          .status(400)
-          .json({ error: "Wrong Username or Password!" });
-      } else {
-        res.json(user.role);
-      }
-    });
-  };
-
-  export const confirmAdmin = async (req, res) =>{
-    const { role } = req.body;
-    const buf1 = role;
-    const buf2 = process.env.NODE_ENV_ADMIN_SECRET;
-    if( buf1 === buf2){
-      res.json("Role Confirmed");
+  const userPassword = user.password;
+  bcrypt.compare(password, userPassword).then((match) => {
+    if (!match) {
+      res
+        .status(400)
+        .json({ error: "Wrong Username or Password!" });
     } else {
-      res.json("Does not match")
+      UserModel.findOneAndUpdate({username: username },{password: newpassword});
+      res.json("User Updated");
     }
-  };
+  });
+};
 
-  export const confirmRole = async (req, res) =>{
-    const { role } = req.body;
-    const buf1 = role;
-    const buf2 = process.env.NODE_ENV_ADMIN_SECRET;
-    const buf3 = process.env.NODE_ENV_USER_SECRET;
-    if( buf1 === buf2 || buf3){
-      res.json("Role Confirmed");
+
+export const getRole = async (req, res) =>{
+  const { username, password } = req.body;
+
+  const user = await UserModel.findOne({username: username });
+
+  if (!user) res.status(400).json({ error: "User Doesn't Exist" });
+
+  const userPassword = user.password;
+  bcrypt.compare(password, userPassword).then((match) => {
+    if (!match) {
+      res
+        .status(400)
+        .json({ error: "Wrong Username or Password!" });
     } else {
-      res.json("Does not match")
+      res.json(user.role);
     }
-  };
+  });
+};
+
+export const confirmAdmin = async (req, res) =>{
+  const { role } = req.body;
+  const buf1 = role;
+  const buf2 = process.env.NODE_ENV_ADMIN_SECRET;
+  if( buf1 === buf2){
+    res.json("Role Confirmed");
+  } else {
+    res.json("Does not match")
+  }
+};
+
+export const confirmRole = async (req, res) =>{
+  const { role } = req.body;
+  const buf1 = role;
+  const buf2 = process.env.NODE_ENV_ADMIN_SECRET;
+  const buf3 = process.env.NODE_ENV_USER_SECRET;
+  if( buf1 === buf2 || buf3){
+    res.json("Role Confirmed");
+  } else {
+    res.json("Does not match")
+  }
+};

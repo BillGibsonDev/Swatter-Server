@@ -27,9 +27,9 @@ export const getProject = async (req, res) => {
 }
 
 export const createProject = async (req, res) => {
-    const { projectTitle, author, projectImage, projectLink } = req.body;
+    const { projectTitle, author, projectImage, projectLink, projectType, description, repository, projectLead, projectKey } = req.body;
 
-    const newProject = new ProjectModel({ projectTitle, author, projectImage, projectLink })
+    const newProject = new ProjectModel({ projectTitle, author, projectType, projectImage, projectLink, description, repository, projectLead, projectKey })
     try {
         await newProject.save();
 
@@ -41,7 +41,7 @@ export const createProject = async (req, res) => {
 
 export const editProject = async (req, res) => {
     const { projectId } = req.params;
-    const { projectTitle, startDate, author, projectImage, projectLink} = req.body;
+    const { projectTitle, startDate, author, projectImage, projectLink, projectType, description, repository, projectLead, projectKey} = req.body;
 
     await ProjectModel.findOneAndUpdate(
         { "_id": projectId },
@@ -52,6 +52,11 @@ export const editProject = async (req, res) => {
                 author: author,
                 projectImage: projectImage,
                 projectLink: projectLink,
+                projectType: projectType,
+                description: description,
+                projectKey: projectKey,
+                repository: repository,
+                projectLead: projectLead,
             }
         },
         {new: true}

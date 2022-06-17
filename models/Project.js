@@ -39,7 +39,7 @@ const CommentSchema = new mongoose.Schema({
 
 const ScheduleSchema = new mongoose.Schema({
     title: String,
-    startDate: { type: Date, default: Date.now },
+    date: String,
     endDate: String,
 })
 
@@ -47,14 +47,15 @@ const ScheduleSchema = new mongoose.Schema({
 const ProjectSchema = new mongoose.Schema({
     projectTitle: String,
     startDate: String,
-    author: String,
+    projectLead: String,
     projectImage: String,
     projectLink: String,
-
+    projectType: String,
+    description: String,
+    projectKey: String,
+    repository: String,
     schedule: [ ScheduleSchema],
-
     bugs: [{ type: BugSchema, ref: "bugs" }],
-
     comments: [{ type: CommentSchema, ref: "comments" }],
 })
 
