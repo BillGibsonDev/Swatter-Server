@@ -64,6 +64,7 @@ export const getAvatar = async (req, res) =>{
   try {
     const user = await UserModel.find({username: username})
     res.status(200).json(user.avatar);
+    console.log(user)
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
