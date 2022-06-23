@@ -27,6 +27,7 @@ const BugSchema = new mongoose.Schema({
     priority: String,
     tag: String,
     flag: Boolean,
+    sprint: String,
     subtasks: [ SubtaskSchema ],
 })
 
@@ -57,6 +58,7 @@ const ProjectSchema = new mongoose.Schema({
     schedule: [ ScheduleSchema],
     bugs: [{ type: BugSchema, ref: "bugs" }],
     comments: [{ type: CommentSchema, ref: "comments" }],
+    sprints: [{title: String}]
 })
 
 export const ProjectModel = mongoose.model("Project", ProjectSchema);

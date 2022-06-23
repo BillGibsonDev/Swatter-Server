@@ -25,7 +25,7 @@ export const getBug = async (req, res) => {
 }
 
 export const createBug = async (req, res) => {
-    const { title, author, description, status, priority, thumbnail, tag, authorAvatar } = req.body;
+    const { title, author, description, status, priority, thumbnail, tag, authorAvatar, sprint, flag } = req.body;
     const { projectId } = req.params;
     const currentDate = new Date();
 
@@ -43,6 +43,8 @@ export const createBug = async (req, res) => {
                     priority,
                     tag,
                     authorAvatar,
+                    sprint,
+                    flag,
                     lastUpdate: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
                 }
             }
@@ -55,7 +57,7 @@ export const createBug = async (req, res) => {
 
 export const updateBug = async (req, res) => {
     const { projectId, bugId } = req.params;
-    const { description, status, priority, tag } = req.body;
+    const { description, status, priority, tag, sprint, flag } = req.body;
     const currentDate = new Date();
     
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
@@ -68,6 +70,8 @@ export const updateBug = async (req, res) => {
                 "bugs.$.status": status,
                 "bugs.$.priority": priority,
                 "bugs.$.tag": tag,
+                "bugs.$.sprint": sprint,
+                "bugs.$.flag": flag,
                 "bugs.$.lastUpdate": currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
             }
         },
