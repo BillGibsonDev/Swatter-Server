@@ -42,7 +42,7 @@ export const createSprint = async (req, res) => {
                 }
             }
         })
-            res.status(201).json("Sprint Created");
+            res.status(200).json("Sprint Created");
         } catch (error) {
             res.status(409).json({ message: error.message });
         }
