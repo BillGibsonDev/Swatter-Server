@@ -44,6 +44,14 @@ const ScheduleSchema = new mongoose.Schema({
     endDate: String,
 })
 
+const SprintSchema = new mongoose.Schema({
+    title: String,
+    goal: String,
+    startDate: String,
+    endDate: String,
+    updated: String,
+})
+
 // parent
 const ProjectSchema = new mongoose.Schema({
     projectTitle: String,
@@ -58,7 +66,7 @@ const ProjectSchema = new mongoose.Schema({
     schedule: [ ScheduleSchema],
     bugs: [{ type: BugSchema, ref: "bugs" }],
     comments: [{ type: CommentSchema, ref: "comments" }],
-    sprints: [{title: String}]
+    sprints: [{SprintSchema}]
 })
 
 export const ProjectModel = mongoose.model("Project", ProjectSchema);
