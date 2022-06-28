@@ -66,7 +66,7 @@ const ProjectSchema = new mongoose.Schema({
     schedule: [ ScheduleSchema],
     bugs: [{ type: BugSchema, ref: "bugs" }],
     comments: [{ type: CommentSchema, ref: "comments" }],
-    sprints: [{SprintSchema}]
+    sprints: [{type: SprintSchema, ref: "sprints"}]
 })
 
 export const ProjectModel = mongoose.model("Project", ProjectSchema);
