@@ -47,7 +47,7 @@ const ScheduleSchema = new mongoose.Schema({
 const SprintSchema = new mongoose.Schema({
     title: String,
     goal: String,
-    startDate: String,
+    color: String,
     endDate: String,
     updated: String,
 })

@@ -25,7 +25,7 @@ export const getSprint = async (req, res) => {
 }
 
 export const createSprint = async (req, res) => {
-    const { goal, startDate, endDate, title } = req.body;
+    const { goal, color, endDate, title } = req.body;
     const { projectId } = req.params;
     const currentDate = new Date();
     
@@ -37,7 +37,7 @@ export const createSprint = async (req, res) => {
                     goal,
                     title,
                     endDate,
-                    startDate,
+                    color,
                     updated: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
                 }
             }
@@ -50,7 +50,7 @@ export const createSprint = async (req, res) => {
 
 export const updateSprint = async (req, res) => {
     const { projectId, sprintId } = req.params;
-    const { goal, startDate, endDate, title } = req.body;
+    const { goal, endDate, title, color } = req.body;
     const currentDate = new Date();
     
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No sprint with id: ${sprintId}`);
@@ -62,7 +62,7 @@ export const updateSprint = async (req, res) => {
                 "sprints.$.goal": goal,
                 "sprints.$.title": title,
                 "sprints.$.endDate": endDate,
-                "sprints.$.startDate": startDate,
+                "sprints.$.color": color,
                 "sprints.$.updated": currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
             }
         },
