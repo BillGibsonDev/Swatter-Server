@@ -21,13 +21,13 @@ router.post(`/${process.env.NODE_ENV_LOGIN_URL}`, loginUser);
 router.post(`/${process.env.NODE_ENV_SET_ROLE_URL}`, getRole);
 router.post(`/${process.env.NODE_ENV_ADMIN_CONFIRM_URL}`, confirmAdmin);
 router.post(`/${process.env.NODE_ENV_ROLE_CONFIRM_URL}`, confirmRole);
-router.post(`/${process.env.NODE_ENV_GET_SPRINT_URL}/:sprintId`, getSprint);
+router.post(`/${process.env.NODE_ENV_GET_SPRINT_URL}/:projectId/:sprintId`, getSprint);
 
 // update
 router.post(`/${process.env.NODE_ENV_UPDATE_PROJECT_URL}/:projectId`, editProject);
 router.post(`/${process.env.NODE_ENV_UPDATE_BUG_URL}/:projectId/:bugId`, updateBug);
 router.post(`/${process.env.NODE_ENV_UPDATE_USER_URL}`, updateUser);
-router.post(`/${process.env.NODE_ENV_UPDATE_SPRINT_URL}/:sprintId`, updateSprint);
+router.post(`/${process.env.NODE_ENV_UPDATE_SPRINT_URL}/:projectId/:sprintId`, updateSprint);
 
 // create
 router.post(`/${process.env.NODE_ENV_ADD_PROJECT_URL}`, createProject);
@@ -40,6 +40,6 @@ router.post(`/${process.env.NODE_ENV_CREATE_SPRINT_URL}/:projectId`, createSprin
 router.delete(`/${process.env.NODE_ENV_DELETE_PROJECT_URL}/:projectId`, deleteProject);
 router.post(`/${process.env.NODE_ENV_DELETE_BUG_URL}/:projectId/:bugId`, deleteBug);
 router.post(`/${process.env.NODE_ENV_DELETE_COMMENT_URL}/:projectId/:commentId`, deleteComment);
-router.post(`/${process.env.NODE_ENV_DELETE_SPRINT_URL}/:sprintId`, deleteSprint);
+router.post(`/${process.env.NODE_ENV_DELETE_SPRINT_URL}/:projectId/:sprintId`, deleteSprint);
 
 export default router;
