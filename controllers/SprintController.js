@@ -28,7 +28,7 @@ export const createSprint = async (req, res) => {
     const { goal, startDate, endDate, title } = req.body;
     const { projectId } = req.params;
     const currentDate = new Date();
-
+    
     try {
         await ProjectModel.findOneAndUpdate({ _id: projectId },
             {
@@ -42,7 +42,7 @@ export const createSprint = async (req, res) => {
                 }
             }
         })
-            res.status(200).json("Sprint Created");
+            res.status(201).json("Sprint Created");
         } catch (error) {
             res.status(409).json({ message: error.message });
         }

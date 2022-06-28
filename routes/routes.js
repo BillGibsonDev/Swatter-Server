@@ -34,7 +34,7 @@ router.post(`/${process.env.NODE_ENV_ADD_PROJECT_URL}`, createProject);
 router.post(`/${process.env.NODE_ENV_ADD_BUG_URL}/:projectId/bugs`, createBug);
 router.post(`/${process.env.NODE_ENV_SEND_COMMENT_URL}/:projectId/comments`, createComment);
 router.post(`/${process.env.NODE_ENV_REGISTER_URL}`, createUser);
-router.post(`/${process.env.NODE_ENV_CREATE_SPRINT_URL}`, createSprint);
+router.post(`/${process.env.NODE_ENV_CREATE_SPRINT_URL}/:projectId`, createSprint);
 
 // delete
 router.delete(`/${process.env.NODE_ENV_DELETE_PROJECT_URL}/:projectId`, deleteProject);
