@@ -6,7 +6,6 @@ const router = express.Router();
 
 export const getSprint = async (req, res) => { 
     const { projectId, sprintId } = req.params;
-    console.log(sprintId)
     try {
         const sprint = await ProjectModel.find({ 
             sprints: {
@@ -17,7 +16,6 @@ export const getSprint = async (req, res) => {
                 }
             }
         )
-        console.log(sprint)
         res.status(200).json(sprint);
     } catch (error) {
         res.status(404).json({ message: error.message });
