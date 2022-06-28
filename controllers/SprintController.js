@@ -13,7 +13,7 @@ export const getSprint = async (req, res) => {
                 $elemMatch: { _id: sprintId}}},
             { 
                 sprints:{ 
-                    $elemMatch: { _id:sprintId }
+                    $elemMatch: { _id: sprintId }
                 }
             }
         )
