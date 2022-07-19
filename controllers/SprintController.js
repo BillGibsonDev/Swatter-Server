@@ -49,7 +49,7 @@ export const createSprint = async (req, res) => {
 
 export const updateSprint = async (req, res) => {
     const { projectId, sprintId } = req.params;
-    const { goal, endDate, title, color } = req.body;
+    const { goal, endDate, title, color, status } = req.body;
     const currentDate = new Date();
     
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No sprint with id: ${sprintId}`);
