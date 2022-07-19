@@ -50,6 +50,7 @@ const SprintSchema = new mongoose.Schema({
     color: String,
     endDate: String,
     updated: String,
+    status: String,
 })
 
 // parent

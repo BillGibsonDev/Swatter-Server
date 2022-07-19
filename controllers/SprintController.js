@@ -23,7 +23,7 @@ export const getSprint = async (req, res) => {
 }
 
 export const createSprint = async (req, res) => {
-    const { goal, color, endDate, title } = req.body;
+    const { goal, color, endDate, title, status } = req.body;
     const { projectId } = req.params;
     const currentDate = new Date();
     
@@ -35,6 +35,7 @@ export const createSprint = async (req, res) => {
                     goal,
                     title,
                     endDate,
+                    status,
                     color,
                     updated: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
                 }
@@ -61,6 +62,7 @@ export const updateSprint = async (req, res) => {
                 "sprints.$.title": title,
                 "sprints.$.endDate": endDate,
                 "sprints.$.color": color,
+                "sprints.$.status": status,
                 "sprints.$.updated": currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
             }
         },
