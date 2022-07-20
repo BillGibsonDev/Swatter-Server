@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 // children
 const ImagesSchema = new mongoose.Schema({
     image: String,
-    label: String,
+    caption: String,
 })
 
 const SubtaskSchema = new mongoose.Schema({
