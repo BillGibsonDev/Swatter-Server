@@ -83,9 +83,7 @@ export const updateBug = async (req, res) => {
 
 
 export const deleteBug = async (req, res) => {
-
     const { projectId, bugId } = req.params;
-
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
         await ProjectModel.findOneAndUpdate(
             { _id: projectId },
@@ -93,4 +91,16 @@ export const deleteBug = async (req, res) => {
             { multi: true }
         )
     res.json("Bug Deleted");
+}
+
+export const deleteImage = async (req, res) => {
+    const { projectId, bugId, imageId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
+        await ProjectModel.findOneAndUpdate(
+            { _id: projectId },
+            { 'bugs': { _id: bugId }  },
+            { $pull: { 'images': { _id: imageId }}},
+            { multi: true }
+        )
+    res.json("Image Deleted");
 }
