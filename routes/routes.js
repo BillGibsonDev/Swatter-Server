@@ -41,6 +41,6 @@ router.delete(`/${process.env.NODE_ENV_DELETE_PROJECT_URL}/:projectId`, deletePr
 router.post(`/${process.env.NODE_ENV_DELETE_BUG_URL}/:projectId/:bugId`, deleteBug);
 router.post(`/${process.env.NODE_ENV_DELETE_COMMENT_URL}/:projectId/:commentId`, deleteComment);
 router.post(`/${process.env.NODE_ENV_DELETE_SPRINT_URL}/:projectId/:sprintId`, deleteSprint);
-router.post(`/${process.env.NODE_ENV_DELETE_IMAGE_URL}/:projectId/:bugId/:imageId`, deleteImage);
+router.post(`/${process.env.NODE_ENV_DELETE_IMAGE_URL}/:projectId/:bugId/images`, deleteImage);
 
 export default router;
