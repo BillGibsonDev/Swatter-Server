@@ -138,8 +138,8 @@ export const deleteBugComment = async (req, res) => {
         { "_id": projectId, "bugs._id": bugId, "comments._id": commentId },
         {
             $pull:{
-                "bugs.$.comments": {
-                    "bugComment.$._id": commentId 
+                "bugComments": {
+                    _id: commentId 
                 }
             }
         },
