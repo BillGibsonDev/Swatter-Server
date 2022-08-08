@@ -6,12 +6,6 @@ const ImagesSchema = new mongoose.Schema({
     caption: String,
 })
 
-const CommentSchema = new mongoose.Schema({
-    comment: String,
-    date: String,
-    author: String,
-    avatar: String,
-})
 
 const BugSchema = new mongoose.Schema({
     title:  String,
@@ -27,6 +21,13 @@ const BugSchema = new mongoose.Schema({
     tag: String,
     flag: Boolean,
     sprint: String,
+})
+
+const CommentSchema = new mongoose.Schema({
+    comment: String,
+    date: String,
+    author: String,
+    avatar: String,
 })
 
 const SprintSchema = new mongoose.Schema({
