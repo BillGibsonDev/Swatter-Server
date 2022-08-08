@@ -144,5 +144,5 @@ export const deleteBugComment = async (req, res) => {
             }
         },
     );
-    res.json("Bug Updated");
+    res.json("Comment Deleted!");
 }
