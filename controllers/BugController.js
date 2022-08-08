@@ -17,7 +17,6 @@ export const getBug = async (req, res) => {
                 }
             }
         )
-        
         res.status(200).json(bug);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -25,7 +24,7 @@ export const getBug = async (req, res) => {
 }
 
 export const createBug = async (req, res) => {
-    const { title, author, description, status, priority, thumbnail, tag, authorAvatar, images, sprint, flag } = req.body;
+    const { title, author, description, status, priority, thumbnail, tag, authorAvatar, images, comments, sprint, flag } = req.body;
     const { projectId } = req.params;
     const currentDate = new Date();
 
@@ -46,6 +45,7 @@ export const createBug = async (req, res) => {
                     sprint,
                     flag,
                     images,
+                    comments,
                     lastUpdate: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
                 }
             }
@@ -58,7 +58,7 @@ export const createBug = async (req, res) => {
 
 export const updateBug = async (req, res) => {
     const { projectId, bugId } = req.params;
-    const { description, status, priority, tag, sprint, flag, images } = req.body;
+    const { description, status, priority, tag, sprint, flag, images, comments } = req.body;
     const currentDate = new Date();
     
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
@@ -74,13 +74,13 @@ export const updateBug = async (req, res) => {
                 "bugs.$.sprint": sprint,
                 "bugs.$.flag": flag,
                 "bugs.$.images": images,
+                "bugs.$.comments": comments,
                 "bugs.$.lastUpdate": currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
             }
         },
     );
     res.json("Bug Updated");
 }
-
 
 export const deleteBug = async (req, res) => {
     const { projectId, bugId } = req.params;

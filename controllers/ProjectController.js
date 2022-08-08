@@ -16,7 +16,6 @@ export const getProjects = async (req, res) => {
 
 export const getProject = async (req, res) => { 
     const { projectId } = req.params;
-
     try {
         const project = await ProjectModel.findById(projectId);
         
@@ -32,7 +31,6 @@ export const createProject = async (req, res) => {
     const newProject = new ProjectModel({ projectTitle, author, projectType, projectImage, projectLink, description, repository, projectLead, projectKey })
     try {
         await newProject.save();
-
         res.status(201).json("Project Created");
     } catch (error) {
         res.status(409).json({ message: error.message });
