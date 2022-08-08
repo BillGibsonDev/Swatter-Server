@@ -105,4 +105,47 @@ export const deleteImage = async (req, res) => {
             }
         )
     res.json("Image Deleted");
+  }
+
+export const createBugComment = async (req, res) => {
+    const { projectId, bugId } = req.params;
+    const { comment, author } = req.body;
+    const currentDate = new Date();
+    
+    if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
+
+    await ProjectModel.findOneAndUpdate(
+        { "_id": projectId, "bugs._id": bugId },
+        {
+            $push:{
+                "bugs.$.comments": {
+                    comment, 
+                    date: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }), 
+                    author
+                }
+            }
+        },
+    );
+    res.json("Comment created!");
+}
+
+export const deleteBugComment = async (req, res) => {
+    const { projectId, bugId, commentId } = req.params;
+    const currentDate = new Date();
+    
+    if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
+
+    await ProjectModel.findOneAndUpdate(
+        { "_id": projectId, "bugs._id": bugId },
+        {
+            $push:{
+                "bugs.$.comments": {
+                    comment, 
+                    date: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }), 
+                    author
+                }
+            }
+        },
+    );
+    res.json("Bug Updated");
 }
