@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 
 import { deleteComment, createComment } from '../controllers/CommentController.js';
-import { createBug, getBug, deleteBug, updateBug, deleteImage } from '../controllers/BugController.js';
+import { createBug, getBug, deleteBug, updateBug, deleteImage, createBugComment } from '../controllers/BugController.js';
 import { getProjects, getProject, deleteProject, createProject, editProject } from '../controllers/ProjectController.js';
 import { confirmAdmin, confirmRole, createUser, getAvatar, getRole, loginUser, updateUser } from '../controllers/UserController.js';
 import { getSprint, createSprint, updateSprint, deleteSprint } from '../controllers/SprintController.js';
@@ -35,6 +35,7 @@ router.post(`/${process.env.NODE_ENV_ADD_BUG_URL}/:projectId/bugs`, createBug);
 router.post(`/${process.env.NODE_ENV_SEND_COMMENT_URL}/:projectId/comments`, createComment);
 router.post(`/${process.env.NODE_ENV_REGISTER_URL}`, createUser);
 router.post(`/${process.env.NODE_ENV_CREATE_SPRINT_URL}/:projectId`, createSprint);
+router.post(`/${process.env.NODE_ENV_BUG_COMMENT_URL}/:projectId/:bugId/comments`, createBugComment);
 
 // delete
 router.delete(`/${process.env.NODE_ENV_DELETE_PROJECT_URL}/:projectId`, deleteProject);
