@@ -135,11 +135,11 @@ export const deleteBugComment = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
 
     await ProjectModel.findOneAndUpdate(
-        { "_id": projectId},
+        { "_id": projectId, "bugs._id": bugId },
         {
             $pull:{
-                "bugComments": {
-                    _id: commentId 
+                "bugs.$.comments": {
+                    _id: commentId
                 }
             }
         },
