@@ -36,11 +36,6 @@ const CommentSchema = new mongoose.Schema({
     avatar: String,
 })
 
-const ScheduleSchema = new mongoose.Schema({
-    title: String,
-    date: String,
-    endDate: String,
-})
 
 const SprintSchema = new mongoose.Schema({
     title: String,
@@ -62,7 +57,6 @@ const ProjectSchema = new mongoose.Schema({
     description: String,
     projectKey: String,
     repository: String,
-    schedule: [ ScheduleSchema],
     bugs: [{ type: BugSchema, ref: "bugs" }],
     comments: [{ type: CommentSchema, ref: "comments" }],
     sprints: [{type: SprintSchema, ref: "sprints"}]
