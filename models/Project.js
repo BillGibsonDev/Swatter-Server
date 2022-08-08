@@ -6,13 +6,11 @@ const ImagesSchema = new mongoose.Schema({
     caption: String,
 })
 
-const SubtaskSchema = new mongoose.Schema({
-    description: String,
-    title: String,
-    status: String,
+const BugCommentSchema = new mongoose.Schema({
+    comment: String,
+    date: String,
     author: String,
     avatar: String,
-    priority: String,
 })
 
 const BugSchema = new mongoose.Schema({
@@ -21,14 +19,14 @@ const BugSchema = new mongoose.Schema({
     date: String,
     lastUpdate: String,
     thumbnail: String,
-    images: [ ImagesSchema ],
+    images: [{ type: ImagesSchema, ref: 'bugImage' }],
     status: String,
     author: String,
     priority: String,
     tag: String,
     flag: Boolean,
     sprint: String,
-    subtasks: [ SubtaskSchema ],
+    comments: [{ type: BugCommentSchema, ref: 'bugComments' }],
 })
 
 const CommentSchema = new mongoose.Schema({
