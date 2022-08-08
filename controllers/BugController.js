@@ -81,6 +81,7 @@ export const updateBug = async (req, res) => {
     res.json("Bug Updated");
 }
 
+
 export const deleteBug = async (req, res) => {
     const { projectId, bugId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
@@ -104,7 +105,7 @@ export const deleteImage = async (req, res) => {
             }
         )
     res.json("Image Deleted");
-}
+  }
 
 export const createBugComment = async (req, res) => {
     const { projectId, bugId } = req.params;
@@ -127,7 +128,6 @@ export const createBugComment = async (req, res) => {
     );
     res.json("Comment created!");
 }
-
 
 export const deleteBugComment = async (req, res) => {
     const { projectId, bugId, commentId } = req.params;
