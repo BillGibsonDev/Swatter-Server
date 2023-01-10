@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { deleteComment, createComment } from '../controllers/CommentController.js';
 import { createBug, getBug, deleteBug, updateBug, deleteImage, createBugComment, deleteBugComment } from '../controllers/BugController.js';
 import { getProjects, getProject, deleteProject, createProject, editProject } from '../controllers/ProjectController.js';
-import { confirmAdmin, confirmRole, createUser, getAvatar, getRole, loginUser, updateUser } from '../controllers/UserController.js';
+import { createUser, getAvatar, loginUser, updateUser } from '../controllers/UserController.js';
 import { getSprint, createSprint, updateSprint, deleteSprint } from '../controllers/SprintController.js';
 
 import { validateToken } from '../JWT.js';
@@ -18,9 +18,6 @@ router.get(`/${process.env.NODE_ENV_GET_PROJECT_URL}/:projectId`, getProject);
 router.get(`/${process.env.NODE_ENV_GET_BUG_URL}/:projectId/:bugId`, getBug);
 router.get(`/${process.env.NODE_ENV_GET_AVATAR}/:username`, getAvatar);
 router.post(`/${process.env.NODE_ENV_LOGIN_URL}`, loginUser);
-router.post(`/${process.env.NODE_ENV_SET_ROLE_URL}`, getRole);
-router.post(`/${process.env.NODE_ENV_ADMIN_CONFIRM_URL}`, confirmAdmin);
-router.post(`/${process.env.NODE_ENV_ROLE_CONFIRM_URL}`, confirmRole);
 router.get(`/${process.env.NODE_ENV_GET_SPRINT_URL}/:projectId/:sprintId`, getSprint);
 router.post(`/validateTokens`, validateToken);
 
