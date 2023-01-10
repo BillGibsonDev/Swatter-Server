@@ -1,29 +1,25 @@
 import pkg from 'jsonwebtoken';
 const { sign, verify } = pkg;
 
-
 export const createTokens = (user) => {
   const accessToken = sign(
-    { username: user.username, id: user.id },
-    "jwtsecretplschange"
+    { username: user.username, id: user._id, role: user.role },
+    `${process.env.NODE_ENV_JWT_SECRET}`
   );
-
   return accessToken;
 };
 
 export const validateToken = (req, res, next) => {
-  const accessToken = req.cookies["access-token"];
-
-  if (!accessToken)
-    return res.status(400).json({ error: "User not Authenticated!" });
-
+  const { token } = req.body;
   try {
-    const validToken = verify(accessToken, "jwtsecretplschange");
+    const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
     if (validToken) {
       req.authenticated = true;
+      res.json(`${validToken.role}`);
       return next();
     }
   } catch (err) {
-    return res.status(400).json({ error: err });
+    console.log(err)
+    res.json('Token Not Valid');
   }
 };
