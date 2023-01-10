@@ -9,7 +9,6 @@ const router = express.Router();
 
 export const createUser = async (req, res) => {
     const { username, password, role, userRole } = req.body;
-
     if(role !== process.env.NODE_ENV_ADMIN_SECRET){
       res.json("You do not have permission");
     } else {
@@ -34,11 +33,8 @@ export const createUser = async (req, res) => {
   export const loginUser = async (req, res) =>{
     const { username, password } = req.body;
     const currentDate = new Date();
-    
     const user = await UserModel.findOneAndUpdate({username: username },{lastLogin: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' })});
-  
     if (!user) res.status(400).json({ error: "Wrong Username or Password!" });
-  
     const userPassword = user.password;
     bcrypt.compare(password, userPassword).then((match) => {
       if (!match) {
@@ -47,20 +43,17 @@ export const createUser = async (req, res) => {
           .json({ error: "Wrong Username or Password!" });
       } else {
         const accessToken = createTokens(user);
-
         res.cookie("access-token", accessToken, {
-          maxAge: 60 * 60 * 24 * 30 * 1000,
+          maxAge: 1000 * 60 * 60 * 24,
           httpOnly: true,
         });
-
-        res.json("LOGGED IN");
+        res.json(accessToken);
       }
     });
   };
 
 export const getAvatar = async (req, res) =>{
   const { username } = req.body;
-  
   try {
     const user = await UserModel.find({username: username})
     res.status(200).json(user.avatar);
@@ -73,7 +66,6 @@ export const getAvatar = async (req, res) =>{
 // not tested \0/
 export const updateUser = async (req, res) =>{
   const { username, password, newpassword} = req.body;
-
   const userPassword = user.password;
   bcrypt.compare(password, userPassword).then((match) => {
     if (!match) {
@@ -90,11 +82,8 @@ export const updateUser = async (req, res) =>{
 
 export const getRole = async (req, res) =>{
   const { username, password } = req.body;
-
   const user = await UserModel.findOne({username: username });
-
   if (!user) res.status(400).json({ error: "User Doesn't Exist" });
-
   const userPassword = user.password;
   bcrypt.compare(password, userPassword).then((match) => {
     if (!match) {

@@ -22,6 +22,7 @@ router.post(`/${process.env.NODE_ENV_SET_ROLE_URL}`, getRole);
 router.post(`/${process.env.NODE_ENV_ADMIN_CONFIRM_URL}`, confirmAdmin);
 router.post(`/${process.env.NODE_ENV_ROLE_CONFIRM_URL}`, confirmRole);
 router.get(`/${process.env.NODE_ENV_GET_SPRINT_URL}/:projectId/:sprintId`, getSprint);
+router.post(`/validateTokens`, validateToken);
 
 // update
 router.post(`/${process.env.NODE_ENV_UPDATE_PROJECT_URL}/:projectId`, editProject);
