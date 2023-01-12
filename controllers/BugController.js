@@ -6,7 +6,6 @@ const router = express.Router();
 
 export const getBug = async (req, res) => { 
     const { projectId, bugId } = req.params;
-
     try {
         const bug = await ProjectModel.find({ 
             bugs: {
@@ -17,7 +16,6 @@ export const getBug = async (req, res) => {
                 }
             }
         )
-        
         res.status(200).json(bug);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -28,7 +26,6 @@ export const createBug = async (req, res) => {
     const { title, author, description, status, priority, thumbnail, tag, authorAvatar, images, sprint, flag } = req.body;
     const { projectId } = req.params;
     const currentDate = new Date();
-
     try {
         await ProjectModel.findOneAndUpdate({ _id: projectId },
             {
@@ -60,9 +57,7 @@ export const updateBug = async (req, res) => {
     const { projectId, bugId } = req.params;
     const { description, status, priority, tag, sprint, flag, images } = req.body;
     const currentDate = new Date();
-    
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
-
     await ProjectModel.findOneAndUpdate(
         { "_id": projectId, "bugs._id": bugId },
         {

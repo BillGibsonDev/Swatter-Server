@@ -8,7 +8,6 @@ export const createComment = async (req, res) => {
     const { projectId } = req.params;
     const { comment, author } = req.body;
     const currentDate = new Date();
-    
     try {
         await ProjectModel.findOneAndUpdate({ _id: projectId },
             {
@@ -24,14 +23,11 @@ export const createComment = async (req, res) => {
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
-    
 }
 
 export const deleteComment = async (req, res) => {
     const { projectId, commentId } = req.params;
-
     if (!mongoose.Types.ObjectId.isValid(commentId)) return res.status(404).send(`No comment with id: ${commentId}`);
-
     await ProjectModel.findOneAndUpdate(
         { _id: projectId },
         { $pull: { 'comments': { _id: commentId } } },

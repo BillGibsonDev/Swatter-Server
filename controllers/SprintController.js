@@ -26,7 +26,6 @@ export const createSprint = async (req, res) => {
     const { goal, color, endDate, title, status } = req.body;
     const { projectId } = req.params;
     const currentDate = new Date();
-    
     try {
         await ProjectModel.findOneAndUpdate({ _id: projectId },
             {
@@ -41,19 +40,17 @@ export const createSprint = async (req, res) => {
                 }
             }
         })
-            res.status(201).json("Sprint Created");
-        } catch (error) {
-            res.status(409).json({ message: error.message });
-        }
+        res.status(201).json("Sprint Created");
+    } catch (error) {
+        res.status(409).json({ message: error.message });
+    }
 }
 
 export const updateSprint = async (req, res) => {
     const { projectId, sprintId } = req.params;
     const { goal, endDate, title, color, status } = req.body;
     const currentDate = new Date();
-    
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No sprint with id: ${sprintId}`);
-
     await ProjectModel.findOneAndUpdate(
         { "_id": projectId, "sprints._id": sprintId },
         {
@@ -70,11 +67,8 @@ export const updateSprint = async (req, res) => {
     res.json("Sprint Updated");
 }
 
-
 export const deleteSprint = async (req, res) => {
-
     const { projectId, sprintId } = req.params;
-
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No bug with id: ${sprintId}`);
         await ProjectModel.findOneAndUpdate(
             { _id: projectId },

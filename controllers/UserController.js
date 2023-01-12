@@ -8,45 +8,45 @@ import { createTokens, validateToken } from "../JWT.js";
 const router = express.Router();
 
 export const createUser = async (req, res) => {
-    const { username, password, role, userRole } = req.body;
-    if(role !== process.env.NODE_ENV_ADMIN_SECRET){
-      res.json("You do not have permission");
-    } else {
-      bcrypt.hash(password, 10).then((hash) => {
-        UserModel.create({
-          username: username,
-          password: hash,
-          role: userRole,
-        })
-          .then(() => {
-            res.json("USER REGISTERED");
-          })
-          .catch((err) => {
-            if (err) {
-              res.status(400).json({ error: err });
-            }
-          });
+  const { username, password, role, userRole } = req.body;
+  if(role !== process.env.NODE_ENV_ADMIN_SECRET){
+    res.json("You do not have permission");
+  } else {
+    bcrypt.hash(password, 10).then((hash) => {
+      UserModel.create({
+        username: username,
+        password: hash,
+        role: userRole,
+      })
+      .then(() => {
+        res.json("USER REGISTERED");
+      })
+      .catch((err) => {
+        if (err) {
+          res.status(400).json({ error: err });
+        }
       });
-    }
-  };
-
-  export const loginUser = async (req, res) =>{
-    const { username, password } = req.body;
-    const currentDate = new Date();
-    const user = await UserModel.findOneAndUpdate({username: username },{lastLogin: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' })});
-    if (!user) res.status(400).json({ error: "Wrong Username or Password!" });
-    const userPassword = user.password;
-    bcrypt.compare(password, userPassword).then((match) => {
-      if (!match) {
-        res
-          .status(400)
-          .json({ error: "Wrong Username or Password!" });
-      } else {
-        const accessToken = createTokens(user);
-        res.send(accessToken);
-      }
     });
-  };
+  }
+};
+
+export const loginUser = async (req, res) =>{
+  const { username, password } = req.body;
+  const currentDate = new Date();
+  const user = await UserModel.findOneAndUpdate({username: username },{lastLogin: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' })});
+  if (!user) res.status(400).json({ error: "Wrong Username or Password!" });
+  const userPassword = user.password;
+  bcrypt.compare(password, userPassword).then((match) => {
+    if (!match) {
+      res
+        .status(400)
+        .json({ error: "Wrong Username or Password!" });
+    } else {
+      const accessToken = createTokens(user);
+      res.send(accessToken);
+    }
+  });
+};
 
 export const getAvatar = async (req, res) =>{
   const { username } = req.body;
