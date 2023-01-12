@@ -43,11 +43,7 @@ export const createUser = async (req, res) => {
           .json({ error: "Wrong Username or Password!" });
       } else {
         const accessToken = createTokens(user);
-        res.cookie("access-token", accessToken, {
-          maxAge: 1000 * 60 * 60 * 24,
-          httpOnly: true,
-        });
-        res.json(accessToken);
+        res.send(accessToken);
       }
     });
   };

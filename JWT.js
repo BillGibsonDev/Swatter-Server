@@ -3,8 +3,13 @@ const { sign, verify } = pkg;
 
 export const createTokens = (user) => {
   const accessToken = sign(
-    { username: user.username, id: user._id, role: user.role },
-    `${process.env.NODE_ENV_JWT_SECRET}`
+    { 
+      username: user.username, 
+      id: user._id, 
+      role: user.role 
+    },
+    `${process.env.NODE_ENV_JWT_SECRET}`,
+    { expiresIn: '16h' }
   );
   return accessToken;
 };
@@ -17,9 +22,12 @@ export const validateToken = (req, res, next) => {
       req.authenticated = true;
       res.json(`${validToken.role}`);
       return next();
+    } else {
+      console.log(validToken);
+      res.json('Token Not Valid');
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.json('Token Not Valid');
   }
 };
