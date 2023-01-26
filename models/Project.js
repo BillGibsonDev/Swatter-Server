@@ -24,7 +24,6 @@ const BugSchema = new mongoose.Schema({
     author: String,
     priority: String,
     tag: String,
-    flag: Boolean,
     sprint: String,
     comments: [{type: BugCommentSchema, ref: 'bugComment'}]
 })
@@ -33,7 +32,6 @@ const CommentSchema = new mongoose.Schema({
     comment: String,
     date: String,
     author: String,
-    avatar: String,
 })
 
 const SprintSchema = new mongoose.Schema({

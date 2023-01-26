@@ -1,8 +1,5 @@
-import express from 'express';
 import mongoose from 'mongoose';
 import { ProjectModel } from "../models/Project.js";
-
-const router = express.Router();
 
 export const getProjects = async (req, res) => { 
     try {
@@ -30,37 +27,45 @@ export const createProject = async (req, res) => {
         await newProject.save();
         res.status(201).json("Project Created");
     } catch (error) {
-        res.status(409).json({ message: error.message });
+        res.status(400).json({ message: error.message });
     }   
 }
 
 export const editProject = async (req, res) => {
     const { projectId } = req.params;
     const { projectTitle, startDate, author, projectImage, projectLink, projectType, description, repository, projectLead, projectKey} = req.body;
-    await ProjectModel.findOneAndUpdate(
-        { "_id": projectId },
-        {
-            $set:{
-                projectTitle: projectTitle,
-                startDate: startDate,
-                author: author,
-                projectImage: projectImage,
-                projectLink: projectLink,
-                projectType: projectType,
-                description: description,
-                projectKey: projectKey,
-                repository: repository,
-                projectLead: projectLead,
-            }
-        },
-        {new: true}
-    );
+    try {
+        await ProjectModel.findOneAndUpdate(
+            { "_id": projectId },
+            {
+                $set:{
+                    projectTitle: projectTitle,
+                    startDate: startDate,
+                    author: author,
+                    projectImage: projectImage,
+                    projectLink: projectLink,
+                    projectType: projectType,
+                    description: description,
+                    projectKey: projectKey,
+                    repository: repository,
+                    projectLead: projectLead,
+                }
+            },
+            {new: true}
+        );
     res.json("Project Updated");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
 
 export const deleteProject = async (req, res) => {
     const { projectId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(projectId)) return res.status(404).send(`No project with id: ${projectId}`);
-    await ProjectModel.findByIdAndRemove(projectId);
-    res.json("Project Deleted");
+    try {
+        await ProjectModel.findByIdAndRemove(projectId);
+        res.json("Project Deleted");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }

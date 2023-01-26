@@ -1,13 +1,10 @@
-import express from 'express';
 import mongoose from 'mongoose';
 import { ProjectModel } from "../models/Project.js";
 
-const router = express.Router();
-
-export const getBug = async (req, res) => { 
+export const getBug = async (req, res) => {
     const { projectId, bugId } = req.params;
     try {
-        const bug = await ProjectModel.find({ 
+        const bug = await ProjectModel.findOne({ 
             bugs: {
                 $elemMatch: { _id: bugId}}},
             { 
@@ -23,7 +20,7 @@ export const getBug = async (req, res) => {
 }
 
 export const createBug = async (req, res) => {
-    const { title, author, description, status, priority, thumbnail, tag, authorAvatar, images, sprint, flag } = req.body;
+    const { title, author, description, status, priority, thumbnail, tag, images, sprint } = req.body;
     const { projectId } = req.params;
     const currentDate = new Date();
     try {
@@ -39,58 +36,64 @@ export const createBug = async (req, res) => {
                     author,
                     priority,
                     tag,
-                    authorAvatar,
                     sprint,
-                    flag,
                     images,
                     lastUpdate: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
                 }
             }
         })
-            res.status(201).json("Bug Created");
-        } catch (error) {
-            res.status(409).json({ message: error.message });
-        }
+        res.status(201).json("Bug Created");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
 
 export const updateBug = async (req, res) => {
     const { projectId, bugId } = req.params;
-    const { description, status, priority, tag, sprint, flag, images } = req.body;
+    const { description, status, priority, tag, sprint, images } = req.body;
     const currentDate = new Date();
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
-    await ProjectModel.findOneAndUpdate(
-        { "_id": projectId, "bugs._id": bugId },
-        {
-            $set:{
-                "bugs.$.description": description,
-                "bugs.$.status": status,
-                "bugs.$.priority": priority,
-                "bugs.$.tag": tag,
-                "bugs.$.sprint": sprint,
-                "bugs.$.flag": flag,
-                "bugs.$.images": images,
-                "bugs.$.lastUpdate": currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
-            }
-        },
-    );
-    res.json("Bug Updated");
+    try {
+        await ProjectModel.findOneAndUpdate(
+            { "_id": projectId, "bugs._id": bugId },
+            {
+                $set:{
+                    "bugs.$.description": description,
+                    "bugs.$.status": status,
+                    "bugs.$.priority": priority,
+                    "bugs.$.tag": tag,
+                    "bugs.$.sprint": sprint,
+                    "bugs.$.images": images,
+                    "bugs.$.lastUpdate": currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
+                }
+            },
+        );
+        res.json("Bug Updated");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
 
 
 export const deleteBug = async (req, res) => {
     const { projectId, bugId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
+    try {
         await ProjectModel.findOneAndUpdate(
             { _id: projectId },
             { $pull: { 'bugs': { _id: bugId } } },
             { multi: true }
         )
-    res.json("Bug Deleted");
+        res.json("Bug Deleted");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
 
 export const deleteImage = async (req, res) => {
     const { projectId, bugId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No Bug with id: ${bugId}`);
+    try { 
         await ProjectModel.findOneAndUpdate(
             { _id: projectId, 'bugs._id': bugId },
             {   
@@ -99,45 +102,52 @@ export const deleteImage = async (req, res) => {
                 }
             }
         )
-    res.json("Image Deleted");
+        res.json("Image Deleted");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
   }
 
 export const createBugComment = async (req, res) => {
     const { projectId, bugId } = req.params;
     const { comment, author } = req.body;
     const currentDate = new Date();
-    
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
-
-    await ProjectModel.findOneAndUpdate(
-        { "_id": projectId, "bugs._id": bugId },
-        {
-            $push:{
-                "bugs.$.comments": {
-                    comment, 
-                    date: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }), 
-                    author
+    try {
+        await ProjectModel.findOneAndUpdate(
+            { "_id": projectId, "bugs._id": bugId },
+            {
+                $push:{
+                    "bugs.$.comments": {
+                        comment, 
+                        date: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }), 
+                        author
+                    }
                 }
-            }
-        },
-    );
-    res.json("Comment created!");
+            },
+        );
+        res.json("Comment created!");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
 
 export const deleteBugComment = async (req, res) => {
-    const { projectId, bugId, commentId } = req.params;
-    
+    const { projectId, bugId, commentId } = req.params;  
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
-
-    await ProjectModel.findOneAndUpdate(
-        { "_id": projectId, "bugs._id": bugId },
-        {
-            $pull:{
-                "bugs.$.comments": {
-                    _id: commentId
+    try {
+        await ProjectModel.findOneAndUpdate(
+            { "_id": projectId, "bugs._id": bugId },
+            {
+                $pull:{
+                    "bugs.$.comments": {
+                        _id: commentId
+                    }
                 }
-            }
-        },
-    );
-    res.json("Comment Deleted!");
+            },
+        );
+        res.json("Comment Deleted!");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
