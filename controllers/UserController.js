@@ -43,20 +43,14 @@ export const loginUser = async (req, res) =>{
         .json({ error: "Wrong Username or Password!" });
     } else {
       const accessToken = createTokens(user);
+      const updateUser = async () => await UserModel.findOneAndUpdate(
+        { _id: user._id },
+        { $set: { token: accessToken}}, 
+        { new: true })
+      updateUser();
       res.send(accessToken);
     }
   });
-};
-
-export const getAvatar = async (req, res) =>{
-  const { username } = req.body;
-  try {
-    const user = await UserModel.find({username: username})
-    res.status(200).json(user.avatar);
-    console.log(user)
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
 };
 
 // not tested \0/

@@ -1,11 +1,8 @@
-import express from 'express';
 import mongoose from 'mongoose';
 import { ProjectModel } from "../models/Project.js";
 
-const router = express.Router();
-
 export const getSprint = async (req, res) => { 
-    const { projectId, sprintId } = req.params;
+    const { sprintId } = req.params;
     try {
         const sprint = await ProjectModel.find({ 
             sprints: {
@@ -51,7 +48,8 @@ export const updateSprint = async (req, res) => {
     const { goal, endDate, title, color, status } = req.body;
     const currentDate = new Date();
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No sprint with id: ${sprintId}`);
-    await ProjectModel.findOneAndUpdate(
+    try {
+        await ProjectModel.findOneAndUpdate(
         { "_id": projectId, "sprints._id": sprintId },
         {
             $set:{
@@ -65,15 +63,22 @@ export const updateSprint = async (req, res) => {
         },
     );
     res.json("Sprint Updated");
+    } catch(error){
+        res.status(400).json({ message: error.message });
+    }
 }
 
 export const deleteSprint = async (req, res) => {
     const { projectId, sprintId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No bug with id: ${sprintId}`);
-        await ProjectModel.findOneAndUpdate(
-            { _id: projectId },
-            { $pull: { 'sprints': { _id: sprintId } } },
-            { multi: true }
-        )
-    res.json("Sprint Deleted");
+       try {
+            await ProjectModel.findOneAndUpdate(
+                { _id: projectId },
+                { $pull: { 'sprints': { _id: sprintId } } },
+                { multi: true }
+            )
+        res.json("Sprint Deleted");
+    } catch(error){
+        res.status(400).json({ message: error.message });
+    }
 }
