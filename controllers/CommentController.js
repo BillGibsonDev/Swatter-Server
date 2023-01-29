@@ -16,7 +16,7 @@ export const createComment = async (req, res) => {
                 }
             }
         })
-        res.status(201).json("Comment Created");
+        res.status(201).json("Comment created!");
     } catch (error) {
         res.status(409).json({ message: error.message });
     }

@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 import { ProjectModel } from "../models/Project.js";
 
 export const getSprint = async (req, res) => { 
-    const { sprintId } = req.params;
+    const { projectId, sprintId } = req.params;
     try {
-        const sprint = await ProjectModel.find({ 
+        const sprint = await ProjectModel.findOne({ 
             sprints: {
                 $elemMatch: { _id: sprintId}}},
             { 
@@ -45,7 +45,7 @@ export const createSprint = async (req, res) => {
 
 export const updateSprint = async (req, res) => {
     const { projectId, sprintId } = req.params;
-    const { goal, endDate, title, color, status } = req.body;
+    const { goal, endDate, title, color, status, lastTitle } = req.body;
     const currentDate = new Date();
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No sprint with id: ${sprintId}`);
     try {
@@ -61,6 +61,13 @@ export const updateSprint = async (req, res) => {
                 "sprints.$.updated": currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
             }
         },
+        await ProjectModel.updateMany(
+            { _id: projectId, "bugs.sprint": lastTitle}, 
+            { $set:{ 
+                'bugs.$.sprint': title
+            }},
+            { multi: true }
+        )
     );
     res.json("Sprint Updated");
     } catch(error){
@@ -70,11 +77,19 @@ export const updateSprint = async (req, res) => {
 
 export const deleteSprint = async (req, res) => {
     const { projectId, sprintId } = req.params;
+    const {sprintTitle} = req.body;
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No bug with id: ${sprintId}`);
        try {
             await ProjectModel.findOneAndUpdate(
                 { _id: projectId },
-                { $pull: { 'sprints': { _id: sprintId } } },
+                { $pull: { 'sprints': { _id: sprintId } }},
+                { multi: true }
+            )
+            await ProjectModel.updateMany(
+                { _id: projectId, 'bugs.sprint': sprintTitle}, 
+                { $set:{ 
+                    'bugs.$.sprint': ''
+                }},
                 { multi: true }
             )
         res.json("Sprint Deleted");
