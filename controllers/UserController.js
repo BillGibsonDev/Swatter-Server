@@ -3,15 +3,14 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import cookieParser from "cookie-parser";
 import { UserModel } from "../models/User.js";
-import { createTokens, validateToken } from "../JWT.js";
+import { createTokens, validateAdmin } from "../JWT.js";
 
 const router = express.Router();
 
 export const createUser = async (req, res) => {
   const { username, password, role, userRole } = req.body;
-  if(role !== process.env.NODE_ENV_ADMIN_SECRET){
-    res.json("You do not have permission");
-  } else {
+  let token = req.headers.authorization;
+  if(validateAdmin(token)){
     bcrypt.hash(password, 10).then((hash) => {
       UserModel.create({
         username: username,
@@ -27,6 +26,8 @@ export const createUser = async (req, res) => {
         }
       });
     });
+  } else {
+    res.status(400).json('Invalid');
   }
 };
 

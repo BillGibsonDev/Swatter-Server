@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { ProjectModel } from "../models/Project.js";
+import { validateAdmin } from '../JWT.js';
 
 export const getSprint = async (req, res) => { 
     const { projectId, sprintId } = req.params;
@@ -23,23 +24,28 @@ export const createSprint = async (req, res) => {
     const { goal, color, endDate, title, status } = req.body;
     const { projectId } = req.params;
     const currentDate = new Date();
-    try {
-        await ProjectModel.findOneAndUpdate({ _id: projectId },
-            {
-            '$push': {
-                'sprints': {  
-                    goal,
-                    title,
-                    endDate,
-                    status,
-                    color,
-                    updated: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
+    let token = req.headers.authorization;
+    if(validateAdmin(token)){
+        try {
+            await ProjectModel.findOneAndUpdate({ _id: projectId },
+                {
+                '$push': {
+                    'sprints': {  
+                        goal,
+                        title,
+                        endDate,
+                        status,
+                        color,
+                        updated: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
+                    }
                 }
-            }
-        })
-        res.status(201).json("Sprint Created");
-    } catch (error) {
-        res.status(409).json({ message: error.message });
+            })
+            res.status(201).json("Sprint Created");
+        } catch (error) {
+            res.status(409).json({ message: error.message });
+        }
+    } else {
+        res.status(400).json('Invalid');
     }
 }
 
@@ -48,38 +54,45 @@ export const updateSprint = async (req, res) => {
     const { goal, endDate, title, color, status, lastTitle } = req.body;
     const currentDate = new Date();
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No sprint with id: ${sprintId}`);
-    try {
-        await ProjectModel.findOneAndUpdate(
-        { "_id": projectId, "sprints._id": sprintId },
-        {
-            $set:{
-                "sprints.$.goal": goal,
-                "sprints.$.title": title,
-                "sprints.$.endDate": endDate,
-                "sprints.$.color": color,
-                "sprints.$.status": status,
-                "sprints.$.updated": currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
-            }
-        },
-        await ProjectModel.updateMany(
-            { _id: projectId, "bugs.sprint": lastTitle}, 
-            { $set:{ 
-                'bugs.$.sprint': title
-            }},
-            { multi: true }
-        )
-    );
-    res.json("Sprint Updated");
-    } catch(error){
-        res.status(400).json({ message: error.message });
+    let token = req.headers.authorization;
+    if(validateAdmin(token)){
+        try {
+            await ProjectModel.findOneAndUpdate(
+            { "_id": projectId, "sprints._id": sprintId },
+            {
+                $set:{
+                    "sprints.$.goal": goal,
+                    "sprints.$.title": title,
+                    "sprints.$.endDate": endDate,
+                    "sprints.$.color": color,
+                    "sprints.$.status": status,
+                    "sprints.$.updated": currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
+                }
+            },
+            await ProjectModel.updateMany(
+                { _id: projectId, "bugs.sprint": lastTitle}, 
+                { $set:{ 
+                    'bugs.$.sprint': title
+                }},
+                { multi: true }
+            )
+        );
+        res.json("Sprint Updated");
+        } catch(error){
+            res.status(400).json({ message: error.message });
+        }
+    } else {
+        res.status(400).json('Invalid');
     }
 }
 
 export const deleteSprint = async (req, res) => {
     const { projectId, sprintId } = req.params;
     const {sprintTitle} = req.body;
+    let token = req.headers.authorization;
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No bug with id: ${sprintId}`);
-       try {
+    if(validateAdmin(token)){ 
+        try {
             await ProjectModel.findOneAndUpdate(
                 { _id: projectId },
                 { $pull: { 'sprints': { _id: sprintId } }},
@@ -93,7 +106,10 @@ export const deleteSprint = async (req, res) => {
                 { multi: true }
             )
         res.json("Sprint Deleted");
-    } catch(error){
-        res.status(400).json({ message: error.message });
+        } catch(error){
+            res.status(400).json({ message: error.message });
+        }
+    } else {
+        res.status(400).json('Invalid');
     }
 }
