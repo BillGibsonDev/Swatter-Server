@@ -20,7 +20,7 @@ export const getBug = async (req, res) => {
 }
 
 export const createBug = async (req, res) => {
-    const { title, author, description, status, priority, thumbnail, tag, images, sprint } = req.body;
+    const { title, author, description, status, priority, tag, images, sprint, bugKey } = req.body;
     const { projectId } = req.params;
     const currentDate = new Date();
     try {
@@ -31,13 +31,13 @@ export const createBug = async (req, res) => {
                     title,
                     description, 
                     date: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
-                    thumbnail,
                     status, 
                     author,
                     priority,
                     tag,
                     sprint,
                     images,
+                    bugKey,
                     lastUpdate: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
                 }
             }

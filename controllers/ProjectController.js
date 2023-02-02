@@ -33,7 +33,7 @@ export const createProject = async (req, res) => {
 
 export const editProject = async (req, res) => {
     const { projectId } = req.params;
-    const { projectTitle, startDate, author, projectImage, projectLink, projectType, description, repository, projectLead, projectKey} = req.body;
+    const { projectTitle, startDate, author, projectImage, projectLink, projectType, description, repository, projectLead } = req.body;
     try {
         await ProjectModel.findOneAndUpdate(
             { "_id": projectId },
@@ -46,7 +46,6 @@ export const editProject = async (req, res) => {
                     projectLink: projectLink,
                     projectType: projectType,
                     description: description,
-                    projectKey: projectKey,
                     repository: repository,
                     projectLead: projectLead,
                 }
