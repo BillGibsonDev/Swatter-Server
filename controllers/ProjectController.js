@@ -23,7 +23,7 @@ export const getProject = async (req, res) => {
 
 export const createProject = async (req, res) => {
     const { projectTitle, author, projectImage, projectLink, projectType, description, repository, projectLead, projectKey } = req.body;
-    const newProject = new ProjectModel({ projectTitle, author, projectType, projectImage, projectLink, description, repository, projectLead, projectKey })
+    const newProject = new ProjectModel({ projectTitle, author, projectType, projectImage, projectLink, description, repository, projectLead, projectKey, lastUpdate: Date.now() })
     let token = req.headers.authorization;
     if(validateAdmin(token)){
         try {
@@ -49,6 +49,7 @@ export const editProject = async (req, res) => {
                     $set:{
                         projectTitle: projectTitle,
                         startDate: startDate,
+                        lastUpdate: Date.now(),
                         author: author,
                         projectImage: projectImage,
                         projectLink: projectLink,

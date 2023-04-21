@@ -14,7 +14,7 @@ export const createComment = async (req, res) => {
                 '$push': {
                     'comments': {  
                         comment, 
-                        date: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }), 
+                        date: currentDate, 
                         author
                     }
                 }
