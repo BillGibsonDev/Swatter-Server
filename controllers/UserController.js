@@ -35,24 +35,24 @@ export const loginUser = async (req, res) =>{
   const { username, password } = req.body;
   const currentDate = new Date();
   const user = await UserModel.findOneAndUpdate({username: username },{lastLogin: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' })});
+  const accessToken = createTokens(user);
+  const updateUser = await UserModel.findOneAndUpdate({ username: username }, {token: accessToken}, { new: true })
   if (!user) res.status(400).json({ error: "Wrong Username or Password!" });
   const userPassword = user.password;
-  bcrypt.compare(password, userPassword).then((match) => {
-    if (!match) {
-      res
-        .status(400)
-        .json({ error: "Wrong Username or Password!" });
-    } else {
-      const accessToken = createTokens(user);
-      const updateUser = async () => await UserModel.findOneAndUpdate(
-        { _id: user._id },
-        { $set: { token: accessToken}}, 
-        { new: true })
-      updateUser();
-      res.send(accessToken);
-    }
-  });
-};
+  try {
+    bcrypt.compare(password, userPassword).then((match) => {
+      if (!match) {
+        res
+          .status(400)
+          .json({ error: "Wrong Username or Password!" });
+      } else {
+        res.send(accessToken);
+      }
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
 
 // not tested \0/
 export const updateUser = async (req, res) =>{
