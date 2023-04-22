@@ -9,7 +9,7 @@ export const createTokens = (user) => {
       role: user.role 
     },
     `${process.env.NODE_ENV_JWT_SECRET}`,
-    { expiresIn: '16h' }
+    { expiresIn: '12h' }
   );
   return accessToken;
 };

@@ -29,17 +29,22 @@ export const createSprint = async (req, res) => {
         try {
             await ProjectModel.findOneAndUpdate({ _id: projectId },
                 {
-                '$push': {
-                    'sprints': {  
-                        goal,
-                        title,
-                        endDate,
-                        status,
-                        color,
-                        updated: currentDate.toLocaleString('en-US', { timeZone: 'America/New_York' }),
+                    $set: {
+                        lastUpdate: currentDate,
                     }
-                }
-            })
+                },
+                {
+                    '$push': {
+                        'sprints': {  
+                            goal,
+                            title,
+                            endDate,
+                            status,
+                            color,
+                            updated: currentDate,
+                        }
+                    }
+                })
             res.status(201).json("Sprint Created");
         } catch (error) {
             res.status(409).json({ message: error.message });
@@ -61,6 +66,7 @@ export const updateSprint = async (req, res) => {
             { "_id": projectId, "sprints._id": sprintId },
             {
                 $set:{
+                    lastUpdate: currentDate,
                     "sprints.$.goal": goal,
                     "sprints.$.title": title,
                     "sprints.$.endDate": endDate,
@@ -95,6 +101,7 @@ export const deleteSprint = async (req, res) => {
         try {
             await ProjectModel.findOneAndUpdate(
                 { _id: projectId },
+                { $set: { lastUpdate: currentDate }},
                 { $pull: { 'sprints': { _id: sprintId } }},
                 { multi: true }
             )

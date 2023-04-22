@@ -46,7 +46,8 @@ const SprintSchema = new mongoose.Schema({
 // parent
 const ProjectSchema = new mongoose.Schema({
     projectTitle: String,
-    startDate: String,
+    startDate: String,   
+    lastUpdate: String,
     projectLead: String,
     projectImage: String,
     projectLink: String,
