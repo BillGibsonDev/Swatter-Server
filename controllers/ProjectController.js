@@ -49,7 +49,7 @@ export const editProject = async (req, res) => {
                     $set:{
                         projectTitle: projectTitle,
                         startDate: startDate,
-                        lastUpdate: Date.now(),
+                        lastUpdate: new Date(),
                         author: author,
                         projectImage: projectImage,
                         projectLink: projectLink,
