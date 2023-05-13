@@ -31,10 +31,8 @@ export const createSprint = async (req, res) => {
                 {
                     $set: {
                         lastUpdate: currentDate,
-                    }
-                },
-                {
-                    '$push': {
+                    },
+                    $push: {
                         'sprints': {  
                             goal,
                             title,
@@ -101,8 +99,10 @@ export const deleteSprint = async (req, res) => {
         try {
             await ProjectModel.findOneAndUpdate(
                 { _id: projectId },
-                { $set: { lastUpdate: currentDate }},
-                { $pull: { 'sprints': { _id: sprintId } }},
+                { 
+                    $set: { lastUpdate: currentDate },
+                    $pull: { 'sprints': { _id: sprintId }}
+                },
                 { multi: true }
             )
             await ProjectModel.updateMany(

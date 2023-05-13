@@ -32,25 +32,24 @@ export const createBug = async (req, res) => {
                 {
                     $set: {
                         lastUpdate: currentDate,
-                    }
-                },
-                {
-                '$push': {
-                    'bugs': {  
-                        title,
-                        description, 
-                        date: currentDate,
-                        status, 
-                        author,
-                        priority,
-                        tag,
-                        sprint,
-                        images,
-                        bugKey,
-                        lastUpdate: currentDate,
+                    },
+                    $push: {
+                        'bugs': {  
+                            title,
+                            description, 
+                            date: currentDate,
+                            status, 
+                            author,
+                            priority,
+                            tag,
+                            sprint,
+                            images,
+                            bugKey,
+                            lastUpdate: currentDate,
+                        }
                     }
                 }
-            })
+            )
             res.status(201).json("Bug Created");
         } catch (error) {
             res.status(400).json({ message: error.message });
@@ -99,8 +98,10 @@ export const deleteBug = async (req, res) => {
         try {
             await ProjectModel.findOneAndUpdate(
                 { _id: projectId },
-                { $set: { lastUpdate: currentDate }},
-                { $pull: { 'bugs': { _id: bugId } } },
+                { 
+                    $set: { lastUpdate: currentDate },
+                    $pull: { 'bugs': { _id: bugId } } 
+                },
                 { multi: true }
             )
             res.json("Bug Deleted");
@@ -147,9 +148,7 @@ export const createBugComment = async (req, res) => {
                 {
                     $set: {
                         lastUpdate: currentDate,
-                    }
-                },
-                {
+                    },
                     $push:{
                         "bugs.$.comments": {
                             comment, 
@@ -179,9 +178,7 @@ export const deleteBugComment = async (req, res) => {
                 {
                     $set: {
                         lastUpdate: currentDate,
-                    }
-                },
-                {
+                    },
                     $pull:{
                         "bugs.$.comments": {
                             _id: commentId
