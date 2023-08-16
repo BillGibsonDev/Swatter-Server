@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { ProjectModel } from "../models/Project.js";
-import { validateAdmin } from '../JWT.js';
+import { validateUser } from '../JWT.js';
 
 export const getSprint = async (req, res) => { 
     const { projectId, sprintId } = req.params;
@@ -25,7 +25,7 @@ export const createSprint = async (req, res) => {
     const { projectId } = req.params;
     const currentDate = new Date();
     let token = req.headers.authorization;
-    if(validateAdmin(token)){
+    if(validateUser(token)){
         try {
             await ProjectModel.findOneAndUpdate({ _id: projectId },
                 {
@@ -58,7 +58,7 @@ export const updateSprint = async (req, res) => {
     const currentDate = new Date();
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No sprint with id: ${sprintId}`);
     let token = req.headers.authorization;
-    if(validateAdmin(token)){
+    if(validateUser(token)){
         try {
             await ProjectModel.findOneAndUpdate(
             { "_id": projectId, "sprints._id": sprintId },
@@ -95,7 +95,7 @@ export const deleteSprint = async (req, res) => {
     const {sprintTitle} = req.body;
     let token = req.headers.authorization;
     if (!mongoose.Types.ObjectId.isValid(sprintId)) return res.status(404).send(`No bug with id: ${sprintId}`);
-    if(validateAdmin(token)){ 
+    if(validateUser(token)){ 
         try {
             await ProjectModel.findOneAndUpdate(
                 { _id: projectId },

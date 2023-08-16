@@ -43,21 +43,34 @@ const SprintSchema = new mongoose.Schema({
     status: String,
 })
 
+const MemberSchema = new mongoose.Schema({
+    userId: { type: String, unique: true },
+})
+
+const ActivitySchema = new mongoose.Schema({
+    activity: String, 
+    date: String,
+    user: String,
+})
+
 // parent
 const ProjectSchema = new mongoose.Schema({
-    projectTitle: String,
+    owner: String,
+    title: String,
     startDate: String,   
     lastUpdate: String,
-    projectLead: String,
-    projectImage: String,
-    projectLink: String,
-    projectType: String,
+    lead: String,
+    image: String,
+    link: String,
+    type: String,
     description: String,
-    projectKey: String,
+    key: String,
     repository: String,
+    members: [{ type: MemberSchema, ref: "members" }],
     bugs: [{ type: BugSchema, ref: "bugs" }],
     comments: [{ type: CommentSchema, ref: "comments" }],
-    sprints: [{type: SprintSchema, ref: "sprints"}]
+    sprints: [{type: SprintSchema, ref: "sprints"}],
+    activity: [{ type: ActivitySchema, ref: "activities"}]
 })
 
 export const ProjectModel = mongoose.model("Project", ProjectSchema);

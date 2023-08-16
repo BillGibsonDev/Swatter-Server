@@ -3,14 +3,14 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import cookieParser from "cookie-parser";
 import { UserModel } from "../models/User.js";
-import { createTokens, validateAdmin } from "../JWT.js";
+import { createTokens, validateUser } from "../JWT.js";
 
 const router = express.Router();
 
 export const createUser = async (req, res) => {
   const { username, password, role, userRole } = req.body;
   let token = req.headers.authorization;
-  if(validateAdmin(token)){
+  if(validateUser(token)){
     bcrypt.hash(password, 10).then((hash) => {
       UserModel.create({
         username: username,

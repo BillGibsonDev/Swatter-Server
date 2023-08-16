@@ -33,19 +33,17 @@ export const validateToken = (req, res, next) => {
 
 export const validateUser = ( token ) => {
   const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
-  if(validToken.role === process.env.NODE_ENV_ADMIN_SECRET ){
-    return true;
-  } else if (validToken.role === process.env.NODE_ENV_USER_SECRET) {
+  if(validToken){
     return true;
   } else {
     return false;
   }
 }
 
-export const validateAdmin = ( token ) => {
+export const validateUserID = ( token ) => {
   const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
-  if(validToken.role === process.env.NODE_ENV_ADMIN_SECRET ){
-    return true;
+  if(validToken){
+    return validToken.id;
   } else {
     return false;
   }

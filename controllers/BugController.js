@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { ProjectModel } from "../models/Project.js";
-import { validateAdmin, validateUser } from '../JWT.js';
+import { validateUser } from '../JWT.js';
 
 const currentDate = new Date();
 
@@ -94,7 +94,7 @@ export const deleteBug = async (req, res) => {
     const { projectId, bugId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(bugId)) return res.status(404).send(`No bug with id: ${bugId}`);
     let token = req.headers.authorization;
-    if(validateAdmin(token)){
+    if(validateUser(token)){
         try {
             await ProjectModel.findOneAndUpdate(
                 { _id: projectId },

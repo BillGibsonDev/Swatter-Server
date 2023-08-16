@@ -1,11 +1,16 @@
 import mongoose from 'mongoose';
 import { ProjectModel } from "../models/Project.js";
-import { validateAdmin } from '../JWT.js';
+import { validateUser, validateUserID } from '../JWT.js';
 
-export const getProjects = async (req, res) => { 
+export const getProjects = async (req, res) => {
+    const token = req.headers.authorization;
+    if (!validateUser(token)) { return res.status(400).json('Invalid'); };
+    const userId = validateUserID(token);
+    if (!userId(token)) { return res.status(400).json('Invalid'); };
     try {
-        const projects = await ProjectModel.find(); 
-        res.status(200).json(projects);
+        const ownedProjects = await ProjectModel.find({ owner: userId }); 
+        const memberOfProjects = await ProjectModel.find({ members: userId }); 
+        res.status(200).json({ projects: ownedProjects, memberProjects: memberOfProjects });
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
@@ -13,8 +18,13 @@ export const getProjects = async (req, res) => {
 
 export const getProject = async (req, res) => { 
     const { projectId } = req.params;
+    const token = req.headers.authorization;
+    if (!validateUser(token)) { return res.status(400).json('Invalid'); };
+    const userId = validateUserID(token);
+    if (!userId(token)) { return res.status(400).json('Invalid'); };
     try {
         const project = await ProjectModel.findById(projectId);
+        if(!project.members.includes(userId)){ return res.status(400).json('Invalid'); }
         res.status(200).json(project);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -22,66 +32,77 @@ export const getProject = async (req, res) => {
 }
 
 export const createProject = async (req, res) => {
-    const { projectTitle, author, projectImage, projectLink, projectType, description, repository, projectLead, projectKey } = req.body;
-    const newProject = new ProjectModel({ projectTitle, author, projectType, projectImage, projectLink, description, repository, projectLead, projectKey, lastUpdate: Date.now() })
-    let token = req.headers.authorization;
-    if(validateAdmin(token)){
-        try {
-            await newProject.save();
-            res.status(201).json("Project Created!");
-        } catch (error) {
-            res.status(400).json({ message: error.message });
-        }   
-    } else {
-        res.status(400).json('Invalid');
-    }
+    const { title, author, image, link, type, description, repository, lead, key } = req.body;
+    const token = req.headers.authorization;
+    if (!validateUser(token)) { return res.status(400).json('Invalid'); }
+    try {
+        await new ProjectModel.create({ 
+            title, 
+            author, 
+            type, 
+            image, 
+            link, 
+            description, 
+            repository, 
+            lead, 
+            key, 
+            lastUpdate: Date.now(),
+            members: [],
+            bugs:[],
+            comments: [],
+            sprints: [],
+        })
+        res.status(201).json("Project Created!");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    } 
 }
 
 export const editProject = async (req, res) => {
     const { projectId } = req.params;
-    const { projectTitle, startDate, author, projectImage, projectLink, projectType, description, repository, projectLead } = req.body;
-    let token = req.headers.authorization;
-    if(validateAdmin(token)){
-        try {
-            await ProjectModel.findOneAndUpdate(
-                { "_id": projectId },
-                {
-                    $set:{
-                        projectTitle: projectTitle,
-                        startDate: startDate,
-                        lastUpdate: new Date(),
-                        author: author,
-                        projectImage: projectImage,
-                        projectLink: projectLink,
-                        projectType: projectType,
-                        description: description,
-                        repository: repository,
-                        projectLead: projectLead,
-                    }
-                },
-                {new: true}
-            );
-        res.json("Project Updated");
-        } catch (error) {
-            res.status(400).json({ message: error.message });
-        }
-    } else {
-        res.status(400).json('Invalid');
+    const { title, startDate, author, image, link, type, description, repository, lead } = req.body;
+     const token = req.headers.authorization;
+    if (!validateUser(token)) { return res.status(400).json('Invalid'); };
+    const userId = validateUserID(token);
+    if (!userId) { return res.status(400).json('Invalid'); };
+    try {
+        const updated = await ProjectModel.findOneAndUpdate(
+            { "_id": projectId },
+            {
+                $set:{
+                    title,
+                    startDate,
+                    lastUpdate: new Date(),
+                    author,
+                    image,
+                    link,
+                    type,
+                    description,
+                    repository,
+                    lead,
+                }
+            },
+            {new: true}
+        );
+    res.json(updated ? "Project Updated": "Project not found");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
 }
 
 export const deleteProject = async (req, res) => {
     const { projectId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(projectId)) return res.status(404).send(`No project with id: ${projectId}`);
-    let token = req.headers.authorization;
-    if(validateAdmin(token)){
-        try {
-            await ProjectModel.findByIdAndRemove(projectId);
-            res.json("Project Deleted");
-        } catch (error) {
-            res.status(400).json({ message: error.message });
-        }
-    } else {
-        res.status(400).json('Invalid');
+     const token = req.headers.authorization;
+    if (!validateUser(token)) { return res.status(400).json('Invalid'); };
+    const userId = validateUserID(token);
+    if (!userId(token)) { return res.status(400).json('Invalid'); };
+    try {
+        const project = await ProjectModel.findById(projectId);
+        if(!project){ return res.status(400).json('Invalid'); }
+        if(project.owner !== userId){ return res.status(403).json('Invalid'); }
+        await ProjectModel.findByIdAndDelete(projectId);
+        res.json("Project Deleted");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
 }
