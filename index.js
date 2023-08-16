@@ -14,7 +14,7 @@ app.use(cookieParser());
 import routes from './routes/routes.js';
 
 const host = process.env.HOST || '0.0.0.0';
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8000;
 
 app.use('/', routes);
 
