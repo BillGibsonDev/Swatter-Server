@@ -6,7 +6,6 @@ export const createTokens = (user) => {
     { 
       username: user.username, 
       id: user._id, 
-      role: user.role 
     },
     `${process.env.NODE_ENV_JWT_SECRET}`,
     { expiresIn: '12h' }
@@ -14,16 +13,14 @@ export const createTokens = (user) => {
   return accessToken;
 };
 
-export const validateToken = (req, res, next) => {
+export const validateToken = (req, res) => {
   const { token } = req.body;
   try {
     const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
-    if (validToken) {
-      req.authenticated = true;
-      res.json(`${validToken.role}`);
-      return next();
+    if(validToken) {
+      return true;
     } else {
-      res.json('Token Not Valid');
+      return false;
     }
   } catch (err) {
     console.log(err);
@@ -34,16 +31,7 @@ export const validateToken = (req, res, next) => {
 export const validateUser = ( token ) => {
   const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
   if(validToken){
-    return true;
-  } else {
-    return false;
-  }
-}
-
-export const validateUserID = ( token ) => {
-  const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
-  if(validToken){
-    return validToken.id;
+    return validToken;
   } else {
     return false;
   }

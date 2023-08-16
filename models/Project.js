@@ -41,6 +41,7 @@ const SprintSchema = new mongoose.Schema({
     endDate: String,
     updated: String,
     status: String,
+    createdBy: String,
 })
 
 const MemberSchema = new mongoose.Schema({
@@ -70,7 +71,7 @@ const ProjectSchema = new mongoose.Schema({
     bugs: [{ type: BugSchema, ref: "bugs" }],
     comments: [{ type: CommentSchema, ref: "comments" }],
     sprints: [{type: SprintSchema, ref: "sprints"}],
-    activity: [{ type: ActivitySchema, ref: "activities"}]
+    activities: [{ type: ActivitySchema, ref: "activities"}]
 })
 
 export const ProjectModel = mongoose.model("Project", ProjectSchema);
