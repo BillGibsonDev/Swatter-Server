@@ -58,19 +58,24 @@ export const updateBug = async (req, res) => {
     if (!user) { return res.status(400).json('Invalid'); };
     try {
         const project = await ProjectModel.findOne({ "_id": projectId });
-        if(!project){ return res.status(404).json('No project found')};
-        if(!project.members.includes(user.id)){ return res.status(400).json('Invalid'); };
+        if (!project) { return res.status(404).json('No project found'); }
+        if (!project.members.includes(user.id)) { return res.status(400).json('Invalid'); }
+
+        let bugIndex = project.bugs.findIndex(bug => bug._id.toString() === bugId);
+        if (bugIndex < 0) { return res.status(404).json('Bug not found'); }
+
+        let bug = project.bugs[bugIndex];
+        bug.description = description;
+        bug.status = status;
+        bug.priority = priority;
+        bug.tag = tag;
+        bug.sprint = sprint;
+        bug.images = images;
+        bug.lastUpdate = currentDate;
+
         project.lastUpdate = currentDate;
 
-        let data = { description, status, priority, tag, sprint, images, lastUpdate: currentDate };
-        
-        let index = project.bugs.findIndex(bug => bug._id.toString() === bugId);
-        if(index < 0){ return res.status(404).json('No bug found')};
-        project.bugs[index].set(data);
-
-        let activity = { activity: `Updated ${project.bugs[index].title}`, date: currentDate, user: user.username };
-        
-        project.bugs.splice(index, 1);
+        let activity = { activity: `Updated ${bug.title}`, date: currentDate, user: user.username };
         project.activities.unshift(activity);
         
         await project.save();
