@@ -49,7 +49,7 @@ export const loginUser = async (req, res) =>{
       }
     );
 
-    res.send(accessToken);
+    res.status(200).json({token: accessToken, id: user._id, username: user.username });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

@@ -18,13 +18,13 @@ export const validateToken = (req, res) => {
   try {
     const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
     if(validToken) {
-      return true;
+      res.status(200).json(validToken);
     } else {
-      return false;
+      res.status(403).json('Token invalid');
     }
   } catch (err) {
     console.log(err);
-    res.json('Token Not Valid');
+    res.status(403).json('Token invalid');
   }
 };
 
