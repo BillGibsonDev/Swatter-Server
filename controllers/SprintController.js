@@ -41,12 +41,12 @@ export const createSprint = async (req, res) => {
         project.lastUpdate = currentDate;
         project.sprints.unshift(sprintData);
 
-        let activity = { activity: `Created sprint ${title}`, date: currentDate, user: user.username };
+        let activity = { activity: `created sprint ${title}`, date: currentDate, user: user.username };
         project.activities.unshift(activity);
 
         await project.save();
 
-        res.status(200).json("Sprint Created");
+        res.status(200).json(`${title} created`);
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
@@ -88,12 +88,12 @@ export const updateSprint = async (req, res) => {
             { multi: true }
         );
 
-        let activity = { activity: `Updated sprint ${lastTitle} to ${title}`, date: currentDate, user: user.username };
+        let activity = { activity: `updated sprint ${lastTitle} to ${title}`, date: currentDate, user: user.username };
         project.activities.unshift(activity);
 
         await project.save();
 
-        res.status(200).json("Sprint Updated");
+        res.status(200).json(`Sprint Updated`);
     } catch(error){
         res.status(400).json({ message: error.message });
     }
@@ -131,12 +131,12 @@ export const deleteSprint = async (req, res) => {
             { multi: true }
         );
 
-        let activity = { activity: `Deleted sprint ${title}`, date: currentDate, user: user.username };
+        let activity = { activity: `deleted sprint ${sprintTitle}`, date: currentDate, user: user.username };
         project.activities.unshift(activity);
 
         await project.save();
 
-        res.status(200).json("Sprint Deleted");
+        res.status(200).json(`Sprint ${sprintTitle} deleted`);
     } catch(error){
         res.status(400).json({ message: error.message });
     }

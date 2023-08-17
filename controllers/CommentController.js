@@ -22,7 +22,7 @@ export const createComment = async (req, res) => {
 
         await project.save();
 
-        res.status(201).json("Comment created!");
+        res.status(200).json("Comment created!");
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
@@ -41,13 +41,11 @@ export const deleteComment = async (req, res) => {
 
         const comment = project.comments.find(comment => comment._id.toString() === commentId);
         if(!comment){ return res.status(400).json('No comment found')};
-        if(comment.user !== user.username){ return res.status(403).json('Not authorized')};
+        if(comment.user !== user.username && project.owner !== user.id ){ return res.status(403).json('Not authorized')};
 
-        await ProjectModel.findOneAndUpdate(
-            { _id: projectId },
-            { $pull: { 'comments': { _id: commentId } } },
-            { multi: true }
-        );
+        project.comments = project.comments.filter(comment => comment._id.toString() !== commentId);
+
+        await project.save();
 
         res.status(200).json("Comment Deleted");
     } catch (error) {

@@ -50,6 +50,7 @@ const MemberSchema = new mongoose.Schema({
 
 const ActivitySchema = new mongoose.Schema({
     activity: String, 
+    content: String,
     date: String,
     user: String,
 })

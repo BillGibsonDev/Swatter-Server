@@ -36,7 +36,7 @@ export const createBug = async (req, res) => {
         let data = { title, description, date: currentDate, status, author, priority, tag, sprint, images, bugKey, lastUpdate: currentDate };
         project.bugs.unshift(data);
 
-        let activity = { activity: `Created ${title}`, date: currentDate, user: user.username }
+        let activity = { activity: `created bug ${title}`, date: currentDate, user: user.username }
         project.activities.unshift(activity);
         
         await project.save();
@@ -61,8 +61,8 @@ export const updateBug = async (req, res) => {
         if (!project) { return res.status(404).json('No project found'); }
         if (!project.members.includes(user.id)) { return res.status(400).json('Invalid'); }
 
-        let bugIndex = project.bugs.findIndex(bug => bug._id.toString() === bugId);
-        if (bugIndex < 0) { return res.status(404).json('Bug not found'); }
+        let index = project.bugs.findIndex(bug => bug._id.toString() === bugId);
+        if (index < 0) { return res.status(404).json('No bug found'); }
 
         let bug = project.bugs[bugIndex];
         bug.description = description;
@@ -75,7 +75,7 @@ export const updateBug = async (req, res) => {
 
         project.lastUpdate = currentDate;
 
-        let activity = { activity: `Updated ${bug.title}`, date: currentDate, user: user.username };
+        let activity = { activity: `updated the bug ${bug.title}`, date: currentDate, user: user.username };
         project.activities.unshift(activity);
         
         await project.save();
@@ -96,12 +96,12 @@ export const deleteBug = async (req, res) => {
     if (!user) { return res.status(400).json('Invalid'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
-        if(!project){ return res.status(400).json('No project found')};
+        if(!project){ return res.status(404).json('No project found')};
         project.lastUpdate = currentDate;
 
-        let index = project.bugs.findIndex(bug => bug._id.toString() === bugId);
-        if(index < 0){ return res.status(400).json('Bug not found')};
-        let activity = { activity: `Deleted ${project.bugs[index].title}`, date: currentDate, user: user.username };
+        project.bugs = project.bugs.filter(bug => bug._id.toString() !== bugId);
+
+        let activity = { activity: `deleted ${project.bugs[index].title}`, date: currentDate, user: user.username };
         
         project.bugs.splice(index, 1);
         project.activities.unshift(activity);
@@ -136,7 +136,7 @@ export const createBugComment = async (req, res) => {
 
         await project.save();
 
-        res.json("Comment created!");
+        res.status(200).json("Comment created!");
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -158,13 +158,11 @@ export const deleteBugComment = async (req, res) => {
         let bug = project.bugs.find(bug => bug._id.toString() === bugId);
         if(!bug){ return res.status(404).json('No bug found')};
 
-        let index = bug.comments.findIndex(comment => comment._id.toString() === commentId);
-        if(index < 0){ return res.status(404).json('Comment not found')};
-        bug.comments.splice(index, 1);
+        bug.comments = bug.comments.filter(comment => comment._id.toString() !== commentId);
         
         await project.save();
 
-        res.json("Comment Deleted!");
+        res.status(200).json("Comment Deleted!");
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
