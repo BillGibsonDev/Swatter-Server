@@ -6,14 +6,14 @@ import { UserModel } from "../models/User.js";
 import { createTokens, validateUser } from "../JWT.js";
 
 export const createUser = async (req, res) => {
-  const { username, password, email  } = req.body;
+  const { username, password, email } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const usernameCheck = await UserModel.findOne(username);
-    const emailCheck = await UserModel.findOne(email);
-    if(usernameCheck){ return res.json('Username already exists')};
-    if(emailCheck){ return res.json('Email already in use')};
+    const usernameCheck = await UserModel.findOne({username});
+    const emailCheck = await UserModel.findOne({email});
+    if(usernameCheck){ return res.status(400).json('Username already exists')};
+    if(emailCheck){ return res.status(400).json('Email already in use')};
 
     await UserModel.create({
       username,
@@ -21,7 +21,7 @@ export const createUser = async (req, res) => {
       email
     });
 
-    res.status(201).json('USER REGISTERED');
+    res.status(200).json('Account created');
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
