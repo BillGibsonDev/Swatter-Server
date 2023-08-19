@@ -8,10 +8,13 @@ export const getProjects = async (req, res) => {
     const user = validateUser(token);
     if (!user) { return res.status(400).json('Invalid'); };
     try {
-        const ownedProjects = await ProjectModel.find({ owner: user.id }); 
-        const memberOfProjects = await ProjectModel.find({ members: user.id }); 
-        res.status(200).json({ projects: ownedProjects, memberProjects: memberOfProjects });
+        const ownedProjects = await ProjectModel.find({ 'owner': user.id }); 
+        const memberOfProjects = await ProjectModel.find({ 'members.memberId': user.id }); 
+        const projects = ownedProjects.concat(memberOfProjects);
+
+        res.status(200).json(projects);
     } catch (error) {
+        console.log(error)
         res.status(404).json({ message: error.message });
     }
 };
@@ -33,11 +36,13 @@ export const getProject = async (req, res) => {
 
 export const createProject = async (req, res) => {
     const { title, image, link, type, description, repository, lead, key } = req.body;
+    const { creatingUser } = req.params;
     const token = req.headers.authorization;
     const user = validateUser(token);
-    if (!user) { return res.status(400).json('Invalid'); }
+    if (!user) { return res.status(400).json('Invalid'); };
+    if(user.id !== creatingUser){ return res.status(403).json('Unauthorized')};
     try {
-        await new ProjectModel.create({ 
+        await ProjectModel.create({ 
             title, 
             owner: user.id, 
             type, 
@@ -48,13 +53,14 @@ export const createProject = async (req, res) => {
             lead, 
             key, 
             lastUpdate: Date.now(),
-            members: [{ user: user.id }],
+            members: [],
             bugs:[],
             comments: [],
             sprints: [],
         })
-        res.status(201).json("Project Created!");
+        res.status(200).json("Project Created!");
     } catch (error) {
+        console.log(error)
         res.status(400).json({ message: error.message });
     } 
 };
@@ -67,7 +73,7 @@ export const editProject = async (req, res) => {
 
     const token = req.headers.authorization;
     const user = validateUser(token);
-    if (!user) { return res.status(400).json('Invalid'); };
+    if (!user){ return res.status(403).json('Invalid'); };
     try {
         const project = await ProjectModel.findById(projectId);
         if(!project){ return res.status(404).json('No project found'); }

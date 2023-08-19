@@ -45,7 +45,7 @@ const SprintSchema = new mongoose.Schema({
 })
 
 const MemberSchema = new mongoose.Schema({
-    userId: { type: String, unique: true },
+    memberId: { type: String, unique: true },
 })
 
 const ActivitySchema = new mongoose.Schema({
