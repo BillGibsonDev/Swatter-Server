@@ -34,7 +34,7 @@ export const createSprint = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
-        if(!project.members.includes(user.id)){ return res.status(400).json('Invalid'); };
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
         let sprintData = { createdBy: user.username, goal, title, endDate, status, color, updated: currentDate,}
 
@@ -64,7 +64,7 @@ export const updateSprint = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ "_id": projectId });
         if(!project){ return res.status(400).json('No project found')};
-        if(!project.members.includes(user.id)){ return res.status(400).json('Invalid'); };
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
 
         await ProjectModel.findOneAndUpdate({ "_id": projectId, "sprints._id": sprintId },
@@ -111,7 +111,7 @@ export const deleteSprint = async (req, res) => {
     try {
         const project =  await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
-        if(!project.members.includes(user.id)){ return res.status(400).json('Invalid'); };
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
 
         await ProjectModel.findOneAndUpdate(

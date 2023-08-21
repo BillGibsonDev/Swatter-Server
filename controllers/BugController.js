@@ -7,7 +7,7 @@ export const getBug = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId});
         if(!project){ return res.status(404).json('No project found');}
-        if(!project.members.includes(user.id)){ return res.status(400).json('Invalid'); };
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
         const bug = project.bugs.find({ _id: bugId });
         if(!bug){ return res.status(404).json('No bug found');}
@@ -30,7 +30,7 @@ export const createBug = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No project found')};
-        if(!project.members.includes(user.id)){ return res.status(400).json('Invalid'); };
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
         
         let data = { title, description, date: currentDate, status, author, priority, tag, sprint, images, bugKey, lastUpdate: currentDate };
@@ -59,7 +59,7 @@ export const updateBug = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ "_id": projectId });
         if (!project) { return res.status(404).json('No project found'); }
-        if (!project.members.includes(user.id)) { return res.status(400).json('Invalid'); }
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
         let index = project.bugs.findIndex(bug => bug._id.toString() === bugId);
         if (index < 0) { return res.status(404).json('No bug found'); }
@@ -97,6 +97,7 @@ export const deleteBug = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No project found')};
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
 
         project.bugs = project.bugs.filter(bug => bug._id.toString() !== bugId);
@@ -126,6 +127,7 @@ export const createBugComment = async (req, res) => {
     try { 
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No project found')};
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
 
         let bug = project.bugs.find(bug => bug._id.toString() === bugId);
@@ -153,6 +155,7 @@ export const deleteBugComment = async (req, res) => {
     try { 
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No project found')};
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
 
         let bug = project.bugs.find(bug => bug._id.toString() === bugId);

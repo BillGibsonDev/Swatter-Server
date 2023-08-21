@@ -1,5 +1,5 @@
-import pkg from 'jsonwebtoken';
-const { sign, verify } = pkg;
+import jwt from 'jsonwebtoken';
+const { sign, verify } = jwt;
 
 export const createTokens = (user) => {
   const accessToken = sign(
@@ -8,7 +8,7 @@ export const createTokens = (user) => {
       id: user._id, 
     },
     `${process.env.NODE_ENV_JWT_SECRET}`,
-    { expiresIn: '12h' }
+    { expiresIn: '16h' }
   );
   return accessToken;
 };
@@ -22,17 +22,23 @@ export const validateToken = (req, res) => {
     } else {
       res.status(403).json('Token invalid');
     }
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return 'Token expired:', error.message;
+    }
     res.status(403).json('Token invalid');
   }
 };
 
-export const validateUser = ( token ) => {
-  const validToken = verify(token, `${process.env.NODE_ENV_JWT_SECRET}`);
-  if(validToken){
+export const validateUser = (token) => {
+  try {
+    const validToken = jwt.verify(token, process.env.NODE_ENV_JWT_SECRET);
     return validToken;
-  } else {
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return false;
+    }
+    console.log('Token invalid:', error.message);
     return false;
   }
-}
+};

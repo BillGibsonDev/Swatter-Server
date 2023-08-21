@@ -14,7 +14,7 @@ export const createComment = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No Project Found')};
-        if(!project.members.includes(user.id)){ return res.status(400).json('Invalid'); };
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
         let commentData = { user: user.username, comment: comment, date: currentDate };
 
@@ -37,7 +37,7 @@ export const deleteComment = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
-        if(!project.members.includes(user.id)){ return res.status(400).json('Invalid'); };
+         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
         const comment = project.comments.find(comment => comment._id.toString() === commentId);
         if(!comment){ return res.status(400).json('No comment found')};

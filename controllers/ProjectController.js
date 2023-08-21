@@ -27,7 +27,7 @@ export const getProject = async (req, res) => {
     try {
         const project = await ProjectModel.findById(projectId);
         if(!project){ return res.status(404).json('No project found'); }
-        if(!project.members.includes(user.id)){ return res.status(400).json('Invalid'); };
+        if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         res.status(200).json(project);
     } catch (error) {
         res.status(404).json({ message: error.message });
