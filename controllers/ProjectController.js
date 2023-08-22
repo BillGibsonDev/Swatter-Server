@@ -35,12 +35,10 @@ export const getProject = async (req, res) => {
 };
 
 export const createProject = async (req, res) => {
-    const { title, image, link, type, description, repository, lead, key } = req.body;
-    const { creatingUser } = req.params;
+    const { title, image, link, type, description, repository, lead, key, startDate } = req.body;
     const token = req.headers.authorization;
     const user = validateUser(token);
     if (!user) { return res.status(400).json('Invalid'); };
-    if(user.id !== creatingUser){ return res.status(403).json('Unauthorized')};
     try {
         await ProjectModel.create({ 
             title, 
@@ -52,8 +50,9 @@ export const createProject = async (req, res) => {
             repository, 
             lead, 
             key, 
-            lastUpdate: Date.now(),
-            members: [],
+            startDate: new Date(startDate),
+            lastUpdate: new Date(),
+            members:[],
             bugs:[],
             comments: [],
             sprints: [],
@@ -84,7 +83,7 @@ export const editProject = async (req, res) => {
             {
                 $set: {
                     title,
-                    startDate,
+                    startDate: new Date(startDate),
                     lastUpdate: currentDate,
                     author,
                     image,

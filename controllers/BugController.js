@@ -4,12 +4,16 @@ import { validateUser } from '../JWT.js';
 
 export const getBug = async (req, res) => {
     const { projectId, bugId } = req.params;
+
+    const token = req.headers.authorization;
+    const user = validateUser(token);
+    if (!user) { return res.status(400).json('Invalid'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId});
         if(!project){ return res.status(404).json('No project found');}
-         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
-        const bug = project.bugs.find({ _id: bugId });
+        const bug = project.bugs.find( bug => bug._id.toString() === bugId);
         if(!bug){ return res.status(404).json('No bug found');}
 
         res.status(200).json(bug);
@@ -30,7 +34,7 @@ export const createBug = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No project found')};
-         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
         
         let data = { title, description, date: currentDate, status, author, priority, tag, sprint, images, bugKey, lastUpdate: currentDate };
@@ -41,7 +45,7 @@ export const createBug = async (req, res) => {
         
         await project.save();
 
-        res.status(201).json("Bug Created");
+        res.status(200).json("Bug Created");
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
