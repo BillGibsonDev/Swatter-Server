@@ -5,6 +5,31 @@ import cookieParser from "cookie-parser";
 import { UserModel } from "../models/User.js";
 import { createTokens, validateUser } from "../JWT.js";
 
+export const getUser = async ( req, res ) => {
+  const { userId } = req.params;
+
+  const token = req.headers.authorization;
+  const user = validateUser(token);
+  if (!user) { return res.status(400).json('Invalid'); };
+
+  try {
+    const userData = await UserModel.findOne({ _id: userId });
+    if(!userData){ return res.status(400).json('User does not exist')};
+    if(user.id !== userId){ return res.status(400).json("Information doesn't match")};
+
+    let usersData = { 
+      username: userData.username,
+      email: userData.email,
+      lastLogin: userData.lastLogin,
+      created: userData.created,
+    };
+
+    res.status(200).json(usersData);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
+
 export const createUser = async (req, res) => {
   const { username, password, email } = req.body;
   try {
@@ -18,7 +43,8 @@ export const createUser = async (req, res) => {
     await UserModel.create({
       username,
       password: hashedPassword,
-      email
+      email,
+      created: new Date(),
     });
 
     res.status(200).json('Account created');
@@ -55,7 +81,6 @@ export const loginUser = async (req, res) =>{
   }
 }
 
-// not tested \0/
 export const updateUserPassword = async (req, res) =>{
   const { username, password, newpassword } = req.body;
 
@@ -76,7 +101,7 @@ export const updateUserPassword = async (req, res) =>{
 
     await userData.save();
 
-    res.status(200).json('User updated');
+    res.status(200).json('Password updated');
   }
   catch(error){
     res.status(400).json({ message: error.message });
@@ -84,7 +109,7 @@ export const updateUserPassword = async (req, res) =>{
 };
 
 export const updateUserEmail = async (req, res) =>{
-  const { username, password, email } = req.body;
+  const { username, password, newEmail } = req.body;
 
   const token = req.headers.authorization;
   const user = validateUser(token);
@@ -97,7 +122,32 @@ export const updateUserEmail = async (req, res) =>{
     const match = await bcrypt.compare(password, userData.password);
     if(!match){ return res.status(400).json('Wrong username or password')};
 
-    userData.email = email;
+    userData.email = newEmail;
+
+    await userData.save();
+
+    res.status(200).json('Email updated');
+  }
+  catch(error){
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const updateUsername = async (req, res) =>{
+  const { username, password, newUsername } = req.body;
+
+  const token = req.headers.authorization;
+  const user = validateUser(token);
+  if (!user) { return res.status(400).json('Invalid'); };
+
+  try {
+    const userData = await UserModel.findOne({ username: username });
+    if(!userData){ return res.status(400).json('User does not exist')};
+    
+    const match = await bcrypt.compare(password, userData.password);
+    if(!match){ return res.status(400).json('Wrong username or password')};
+
+    userData.username = newUsername;
 
     await userData.save();
 

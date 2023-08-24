@@ -23,7 +23,7 @@ export const getBug = async (req, res) => {
 };
 
 export const createBug = async (req, res) => {
-    const { title, author, description, status, priority, tag, images, sprint, bugKey } = req.body;
+    const { title, author, description, status, priority, tag, images, sprint } = req.body;
     const { projectId } = req.params;
 
     const currentDate = new Date();
@@ -37,7 +37,7 @@ export const createBug = async (req, res) => {
         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
         
-        let data = { title, description, date: currentDate, status, author, priority, tag, sprint, images, bugKey, lastUpdate: currentDate };
+        let data = { title, description, date: currentDate, status, author: user.username, priority, tag, sprint, images, lastUpdate: currentDate };
         project.bugs.unshift(data);
 
         let activity = { activity: `created bug ${title}`, date: currentDate, user: user.username }

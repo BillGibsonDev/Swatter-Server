@@ -14,15 +14,15 @@ export const createComment = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No Project Found')};
-         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
         let commentData = { user: user.username, comment: comment, date: currentDate };
 
-        projectId.comments.unshift(commentData);
+        project.comments.unshift(commentData);
 
         await project.save();
 
-        res.status(200).json("Comment created!");
+        res.status(200).json(project.comments.reverse());
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
@@ -37,7 +37,7 @@ export const deleteComment = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
-         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
         const comment = project.comments.find(comment => comment._id.toString() === commentId);
         if(!comment){ return res.status(400).json('No comment found')};
@@ -47,7 +47,7 @@ export const deleteComment = async (req, res) => {
 
         await project.save();
 
-        res.status(200).json("Comment Deleted");
+        res.status(200).json(project.comments.reverse());
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

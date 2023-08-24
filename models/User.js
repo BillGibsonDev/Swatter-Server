@@ -16,6 +16,7 @@ const UserSchema = new mongoose.Schema({
         allowNull: false,
         unique: true,
     },
+    created: String,
     token: String,
     lastLogin: String,
 })

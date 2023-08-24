@@ -35,7 +35,7 @@ export const getProject = async (req, res) => {
 };
 
 export const createProject = async (req, res) => {
-    const { title, image, link, type, description, repository, lead, key, startDate } = req.body;
+    const { title, image, link, description, repository } = req.body;
     const token = req.headers.authorization;
     const user = validateUser(token);
     if (!user) { return res.status(400).json('Invalid'); };
@@ -43,14 +43,11 @@ export const createProject = async (req, res) => {
         await ProjectModel.create({ 
             title, 
             owner: user.id, 
-            type, 
             image, 
             link, 
             description, 
-            repository, 
-            lead, 
-            key, 
-            startDate: new Date(startDate),
+            repository,
+            startDate: new Date(),
             lastUpdate: new Date(),
             members:[],
             bugs:[],
@@ -66,7 +63,7 @@ export const createProject = async (req, res) => {
 
 export const editProject = async (req, res) => {
     const { projectId } = req.params;
-    const { title, startDate, author, image, link, type, description, repository, lead } = req.body;
+    const { title, image, link, description, repository } = req.body;
     
     const currentDate = new Date();
 
@@ -83,15 +80,12 @@ export const editProject = async (req, res) => {
             {
                 $set: {
                     title,
-                    startDate: new Date(startDate),
                     lastUpdate: currentDate,
                     author,
                     image,
                     link,
-                    type,
                     description,
                     repository,
-                    lead,
                 }
             }
         );
@@ -108,7 +102,7 @@ export const editProject = async (req, res) => {
 };
 
 export const deleteProject = async (req, res) => {
-    const { projectId } = req.params;
+    const { userId, projectId } = req.params;
     const token = req.headers.authorization;
     const user = validateUser(token);
     if (!user) { return res.status(400).json('Invalid'); };

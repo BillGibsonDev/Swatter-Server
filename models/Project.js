@@ -18,7 +18,6 @@ const BugSchema = new mongoose.Schema({
     description: String,
     date: String,
     lastUpdate: String,
-    bugKey: String,
     images: [{ type: ImagesSchema, ref: 'bugImage'}],
     status: String,
     author: String,
@@ -31,7 +30,7 @@ const BugSchema = new mongoose.Schema({
 const CommentSchema = new mongoose.Schema({
     comment: String,
     date: String,
-    author: String,
+    user: String,
 })
 
 const SprintSchema = new mongoose.Schema({
@@ -61,12 +60,9 @@ const ProjectSchema = new mongoose.Schema({
     title: String,
     startDate: String,   
     lastUpdate: String,
-    lead: String,
     image: String,
     link: String,
-    type: String,
     description: String,
-    key: String,
     repository: String,
     members: [{ type: MemberSchema, ref: "members" }],
     bugs: [{ type: BugSchema, ref: "bugs" }],
