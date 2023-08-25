@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 
 import { deleteComment, createComment } from '../controllers/CommentController.js';
-import { createBug, getBug, deleteBug, updateBug, createBugComment, deleteBugComment } from '../controllers/BugController.js';
+import { createTicket, getTicket, deleteTicket, updateTicket, createTicketComment, deleteTicketComment } from '../controllers/TicketController.js';
 import { getProjects, getProject, deleteProject, createProject, editProject } from '../controllers/ProjectController.js';
 import { createUser, getUser, loginUser, updateUserEmail, updateUserPassword , updateUsername} from '../controllers/UserController.js';
 import { getSprint, createSprint, updateSprint, deleteSprint } from '../controllers/SprintController.js';
@@ -15,7 +15,7 @@ dotenv.config();
 // read
 router.get(`/:userId/projects`, getProjects);
 router.get(`/:userId/projects/:projectId`, getProject);
-router.get(`/:userId/projects/:projectId/bugs/:bugId`, getBug);
+router.get(`/:userId/projects/:projectId/tickets/:ticketId`, getTicket);
 router.post(`/users/login`, loginUser);
 router.get(`/users/:userId/profile`, getUser);
 router.get(`/:userId/projects/:projectId/sprints/:sprintId`, getSprint);
@@ -23,7 +23,7 @@ router.post(`/users/validateTokens`, validateToken);
 
 // update
 router.post(`/:userId/projects/:projectId/edit`, editProject);
-router.post(`/:userId/projects/:projectId/bugs/:bugId/update`, updateBug);
+router.post(`/:userId/projects/:projectId/tickets/:ticketId/update`, updateTicket);
 router.post(`/users/:userId/update/email`, updateUserEmail);
 router.post(`/users/:userId/update/password`, updateUserPassword);
 router.post(`/users/:userId/update/username`, updateUsername);
@@ -31,17 +31,17 @@ router.post(`/:userId/projects/:projectId/sprints/:sprintId/update`, updateSprin
 
 // create
 router.post(`/:userId/projects/create`, createProject);
-router.post(`/:userId/projects/:projectId/bugs/create`, createBug);
+router.post(`/:userId/projects/:projectId/tickets/create`, createTicket);
 router.post(`/:userId/projects/:projectId/comments/create`, createComment);
 router.post(`/users/signup`, createUser);
 router.post(`/:userId/projects/:projectId/sprints/create`, createSprint);
-router.post(`/:userId/projects/:projectId/bugs/:bugId/comments/create`, createBugComment);
+router.post(`/:userId/projects/:projectId/tickets/:ticketId/comments/create`, createTicketComment);
 
 // delete
 router.delete(`/:userId/projects/:projectId/delete`, deleteProject);
-router.post(`/:userId/projects/:projectId/:bugs/bugId/delete`, deleteBug);
+router.post(`/:userId/projects/:projectId/:tickets/ticketId/delete`, deleteTicket);
 router.post(`/:userId/projects/:projectId/comments/:commentId/delete`, deleteComment);
 router.post(`/:userId/projects/:projectId/sprints/:sprintId/delete`, deleteSprint);
-router.post(`/:userId/projects/:projectId/bugs/:bugId/comments/:commentId/delete`, deleteBugComment);
+router.post(`/:userId/projects/:projectId/tickets/:ticketId/comments/:commentId/delete`, deleteTicketComment);
 
 export default router;

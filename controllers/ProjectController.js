@@ -50,7 +50,7 @@ export const createProject = async (req, res) => {
             startDate: new Date(),
             lastUpdate: new Date(),
             members:[],
-            bugs:[],
+            tickets:[],
             comments: [],
             sprints: [],
         })

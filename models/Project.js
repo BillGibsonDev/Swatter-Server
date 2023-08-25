@@ -6,25 +6,25 @@ const ImagesSchema = new mongoose.Schema({
     caption: String,
 })
 
-const BugCommentSchema = new mongoose.Schema({
+const TicketCommentSchema = new mongoose.Schema({
     comment: String,
     date: String,
     author: String,
     avatar: String,
 })
 
-const BugSchema = new mongoose.Schema({
+const TicketSchema = new mongoose.Schema({
     title:  String,
     description: String,
     date: String,
     lastUpdate: String,
-    images: [{ type: ImagesSchema, ref: 'bugImage'}],
+    images: [{ type: ImagesSchema, ref: 'ticketImage'}],
     status: String,
     author: String,
     priority: String,
     tag: String,
     sprint: String,
-    comments: [{type: BugCommentSchema, ref: 'bugComment'}]
+    comments: [{type: TicketCommentSchema, ref: 'ticketComment'}]
 })
 
 const CommentSchema = new mongoose.Schema({
@@ -65,7 +65,7 @@ const ProjectSchema = new mongoose.Schema({
     description: String,
     repository: String,
     members: [{ type: MemberSchema, ref: "members" }],
-    bugs: [{ type: BugSchema, ref: "bugs" }],
+    tickets: [{ type: TicketSchema, ref: "tickets" }],
     comments: [{ type: CommentSchema, ref: "comments" }],
     sprints: [{type: SprintSchema, ref: "sprints"}],
     activities: [{ type: ActivitySchema, ref: "activities"}]

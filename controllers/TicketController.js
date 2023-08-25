@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import { ProjectModel } from "../models/Project.js";
 import { validateUser } from '../JWT.js';
 
-export const getBug = async (req, res) => {
-    const { projectId, bugId } = req.params;
+export const getTicket = async (req, res) => {
+    const { projectId, ticketId } = req.params;
 
     const token = req.headers.authorization;
     const user = validateUser(token);
@@ -13,16 +13,16 @@ export const getBug = async (req, res) => {
         if(!project){ return res.status(404).json('No project found');}
         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
-        const bug = project.bugs.find( bug => bug._id.toString() === bugId);
-        if(!bug){ return res.status(404).json('No bug found');}
+        const ticket = project.tickets.find( ticket => ticket._id.toString() === ticketId);
+        if(!ticket){ return res.status(404).json('No ticket found');}
 
-        res.status(200).json(bug);
+        res.status(200).json(ticket);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
 };
 
-export const createBug = async (req, res) => {
+export const createTicket = async (req, res) => {
     const { title, author, description, status, priority, tag, images, sprint } = req.body;
     const { projectId } = req.params;
 
@@ -38,21 +38,21 @@ export const createBug = async (req, res) => {
         project.lastUpdate = currentDate;
         
         let data = { title, description, date: currentDate, status, author: user.username, priority, tag, sprint, images, lastUpdate: currentDate };
-        project.bugs.unshift(data);
+        project.tickets.unshift(data);
 
-        let activity = { activity: `created bug ${title}`, date: currentDate, user: user.username }
+        let activity = { activity: `created ticket ${title}`, date: currentDate, user: user.username }
         project.activities.unshift(activity);
         
         await project.save();
 
-        res.status(200).json("Bug Created");
+        res.status(200).json("Ticket Created");
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-export const updateBug = async (req, res) => {
-    const { projectId, bugId } = req.params;
+export const updateTicket = async (req, res) => {
+    const { projectId, ticketId } = req.params;
     const { description, status, priority, tag, sprint, images } = req.body;
     
     const currentDate = new Date();
@@ -65,33 +65,33 @@ export const updateBug = async (req, res) => {
         if (!project) { return res.status(404).json('No project found'); }
          if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
-        let index = project.bugs.findIndex(bug => bug._id.toString() === bugId);
-        if (index < 0) { return res.status(404).json('No bug found'); }
+        let index = project.tickets.findIndex(ticket => ticket._id.toString() === ticketId);
+        if (index < 0) { return res.status(404).json('No ticket found'); }
 
-        let bug = project.bugs[bugIndex];
-        bug.description = description;
-        bug.status = status;
-        bug.priority = priority;
-        bug.tag = tag;
-        bug.sprint = sprint;
-        bug.images = images;
-        bug.lastUpdate = currentDate;
+        let ticket = project.tickets[ticketIndex];
+        ticket.description = description;
+        ticket.status = status;
+        ticket.priority = priority;
+        ticket.tag = tag;
+        ticket.sprint = sprint;
+        ticket.images = images;
+        ticket.lastUpdate = currentDate;
 
         project.lastUpdate = currentDate;
 
-        let activity = { activity: `updated the bug ${bug.title}`, date: currentDate, user: user.username };
+        let activity = { activity: `updated the ticket ${ticket.title}`, date: currentDate, user: user.username };
         project.activities.unshift(activity);
         
         await project.save();
 
-        res.status(200).json("Bug Updated");
+        res.status(200).json("Ticket Updated");
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-export const deleteBug = async (req, res) => {
-    const { projectId, bugId } = req.params;
+export const deleteTicket = async (req, res) => {
+    const { projectId, ticketId } = req.params;
 
     const currentDate = new Date();
 
@@ -104,23 +104,23 @@ export const deleteBug = async (req, res) => {
          if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
 
-        project.bugs = project.bugs.filter(bug => bug._id.toString() !== bugId);
+        project.tickets = project.tickets.filter(ticket => ticket._id.toString() !== ticketId);
 
-        let activity = { activity: `deleted ${project.bugs[index].title}`, date: currentDate, user: user.username };
+        let activity = { activity: `deleted ${project.tickets[index].title}`, date: currentDate, user: user.username };
         
-        project.bugs.splice(index, 1);
+        project.tickets.splice(index, 1);
         project.activities.unshift(activity);
 
         await project.save();
 
-        res.status(200).json("Bug Deleted");
+        res.status(200).json("Ticket Deleted");
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-export const createBugComment = async (req, res) => {
-    const { projectId, bugId } = req.params;
+export const createTicketComment = async (req, res) => {
+    const { projectId, ticketId } = req.params;
     const { comment } = req.body;
     
     const currentDate = new Date();
@@ -134,11 +134,11 @@ export const createBugComment = async (req, res) => {
          if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
 
-        let bug = project.bugs.find(bug => bug._id.toString() === bugId);
-        if(!bug){ return res.status(404).json('No bug found')};
+        let ticket = project.tickets.find(ticket => ticket._id.toString() === ticketId);
+        if(!ticket){ return res.status(404).json('No ticket found')};
 
         let commentData = { comment: comment, date: currentDate, user: user.username }
-        bug.comments.unshift(commentData);
+        ticket.comments.unshift(commentData);
 
         await project.save();
 
@@ -148,8 +148,8 @@ export const createBugComment = async (req, res) => {
     }
 };
 
-export const deleteBugComment = async (req, res) => {
-    const { projectId, bugId, commentId } = req.params;  
+export const deleteTicketComment = async (req, res) => {
+    const { projectId, ticketId, commentId } = req.params;  
     
     const currentDate = new Date();
 
@@ -162,10 +162,10 @@ export const deleteBugComment = async (req, res) => {
          if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
         project.lastUpdate = currentDate;
 
-        let bug = project.bugs.find(bug => bug._id.toString() === bugId);
-        if(!bug){ return res.status(404).json('No bug found')};
+        let ticket = project.tickets.find(ticket => ticket._id.toString() === ticketId);
+        if(!ticket){ return res.status(404).json('No ticket found')};
 
-        bug.comments = bug.comments.filter(comment => comment._id.toString() !== commentId);
+        ticket.comments = ticket.comments.filter(comment => comment._id.toString() !== commentId);
         
         await project.save();
 

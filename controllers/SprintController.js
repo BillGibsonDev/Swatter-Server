@@ -81,9 +81,9 @@ export const updateSprint = async (req, res) => {
         );
 
         await ProjectModel.updateMany(
-            { _id: projectId, "bugs.sprint": lastTitle}, 
+            { _id: projectId, "tickets.sprint": lastTitle}, 
             { $set:{ 
-                'bugs.$.sprint': title
+                'tickets.$.sprint': title
             }},
             { multi: true }
         );
@@ -124,9 +124,9 @@ export const deleteSprint = async (req, res) => {
         );
 
         await ProjectModel.updateMany(
-            { _id: projectId, 'bugs.sprint': sprintTitle}, 
+            { _id: projectId, 'tickets.sprint': sprintTitle}, 
             { $set:{ 
-                'bugs.$.sprint': ''
+                'tickets.$.sprint': ''
             }},
             { multi: true }
         );
