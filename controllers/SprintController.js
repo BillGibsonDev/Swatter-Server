@@ -7,13 +7,15 @@ export const getSprint = async (req, res) => {
 
     const token = req.headers.authorization;
     const user = validateUser(token);
-    if (!user) { return res.status(400).json('Invalid'); };
+    if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
-        if(!project.members.includes(user.id)){ return res.status(400).json('Invalid'); };
+         const memberIds = project.members.map(member => member.memberId);
+        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
 
-        const sprint = project.sprints(sprint => sprint._id.toString() === sprintId);
+
+        const sprint = project.sprints.find(sprint => sprint._id.toString() === sprintId);
         if(!sprint){ return res.status(400).json('No sprint found')};
 
         res.status(200).json(sprint);
@@ -30,11 +32,13 @@ export const createSprint = async (req, res) => {
     
     const token = req.headers.authorization;
     const user = validateUser(token);
-    if (!user) { return res.status(400).json('Invalid'); };
+    if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
-         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+         const memberIds = project.members.map(member => member.memberId);
+        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+
 
         let sprintData = { createdBy: user.username, goal, title, endDate, status, color, updated: currentDate,}
 
@@ -60,11 +64,13 @@ export const updateSprint = async (req, res) => {
     
     const token = req.headers.authorization;
     const user = validateUser(token);
-    if (!user) { return res.status(400).json('Invalid'); };
+    if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findOne({ "_id": projectId });
         if(!project){ return res.status(400).json('No project found')};
-         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+          const memberIds = project.members.map(member => member.memberId);
+        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+
         project.lastUpdate = currentDate;
 
         await ProjectModel.findOneAndUpdate({ "_id": projectId, "sprints._id": sprintId },
@@ -93,7 +99,7 @@ export const updateSprint = async (req, res) => {
 
         await project.save();
 
-        res.status(200).json(`Sprint Updated`);
+        res.status(200).json(project.sprints);
     } catch(error){
         res.status(400).json({ message: error.message });
     }
@@ -107,11 +113,13 @@ export const deleteSprint = async (req, res) => {
 
     const token = req.headers.authorization;
     const user = validateUser(token);
-    if (!user) { return res.status(400).json('Invalid'); };
+    if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project =  await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
-         if(!project.members.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+          const memberIds = project.members.map(member => member.memberId);
+        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+
         project.lastUpdate = currentDate;
 
         await ProjectModel.findOneAndUpdate(
@@ -136,7 +144,7 @@ export const deleteSprint = async (req, res) => {
 
         await project.save();
 
-        res.status(200).json(`Sprint ${sprintTitle} deleted`);
+        res.status(200).json(project.sprints);
     } catch(error){
         res.status(400).json({ message: error.message });
     }

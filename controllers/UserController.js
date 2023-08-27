@@ -10,7 +10,7 @@ export const getUser = async ( req, res ) => {
 
   const token = req.headers.authorization;
   const user = validateUser(token);
-  if (!user) { return res.status(400).json('Invalid'); };
+  if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
     const userData = await UserModel.findOne({ _id: userId });
@@ -32,11 +32,13 @@ export const getUser = async ( req, res ) => {
 
 export const createUser = async (req, res) => {
   const { username, password, email } = req.body;
+  const regexUsername = new RegExp(username, "i");
+  const regexEmail = new RegExp(email, "i");
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const usernameCheck = await UserModel.findOne({username});
-    const emailCheck = await UserModel.findOne({email});
+    const usernameCheck = await UserModel.findOne({ username: { $regex: regexUsername } });
+    const emailCheck = await UserModel.findOne({ email: { $regex: regexEmail } });
     if(usernameCheck){ return res.status(400).json('Username already exists')};
     if(emailCheck){ return res.status(400).json('Email already in use')};
 
@@ -59,7 +61,7 @@ export const loginUser = async (req, res) =>{
   const currentDate = new Date();
 
   try {
-    const user = await UserModel.findOne({username: username});
+    const user = await UserModel.findOne({ username: username });
     if(!user){ return res.status(400).json('User does not exist')};
     
     const match = await bcrypt.compare(password, user.password);
@@ -68,7 +70,7 @@ export const loginUser = async (req, res) =>{
     const accessToken = createTokens(user);
     
     await UserModel.findOneAndUpdate(
-      { username: username}, 
+      { username: username }, 
       { 
         token: accessToken, 
         lastLogin: currentDate 
@@ -86,7 +88,7 @@ export const updateUserPassword = async (req, res) =>{
 
   const token = req.headers.authorization;
   const user = validateUser(token);
-  if (!user) { return res.status(400).json('Invalid'); };
+  if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
     const userData = await UserModel.findOne({ username: username });
@@ -113,7 +115,7 @@ export const updateUserEmail = async (req, res) =>{
 
   const token = req.headers.authorization;
   const user = validateUser(token);
-  if (!user) { return res.status(400).json('Invalid'); };
+  if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
     const userData = await UserModel.findOne({ username: username });
@@ -138,10 +140,10 @@ export const updateUsername = async (req, res) =>{
 
   const token = req.headers.authorization;
   const user = validateUser(token);
-  if (!user) { return res.status(400).json('Invalid'); };
+  if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
-    const userData = await UserModel.findOne({ username: username });
+    const userData = await UserModel.findOne({ username: { $regex: regexUsername }});
     if(!userData){ return res.status(400).json('User does not exist')};
     
     const match = await bcrypt.compare(password, userData.password);

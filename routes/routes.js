@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 import { deleteComment, createComment } from '../controllers/CommentController.js';
 import { createTicket, getTicket, deleteTicket, updateTicket, createTicketComment, deleteTicketComment } from '../controllers/TicketController.js';
-import { getProjects, getProject, deleteProject, createProject, editProject } from '../controllers/ProjectController.js';
+import { getProjects, getProject, deleteProject, createProject, editProject, addProjectMember, removeProjectMember } from '../controllers/ProjectController.js';
 import { createUser, getUser, loginUser, updateUserEmail, updateUserPassword , updateUsername} from '../controllers/UserController.js';
 import { getSprint, createSprint, updateSprint, deleteSprint } from '../controllers/SprintController.js';
 
@@ -36,6 +36,7 @@ router.post(`/:userId/projects/:projectId/comments/create`, createComment);
 router.post(`/users/signup`, createUser);
 router.post(`/:userId/projects/:projectId/sprints/create`, createSprint);
 router.post(`/:userId/projects/:projectId/tickets/:ticketId/comments/create`, createTicketComment);
+router.post(`/:userId/projects/:projectId/members/add`, addProjectMember);
 
 // delete
 router.delete(`/:userId/projects/:projectId/delete`, deleteProject);
@@ -43,5 +44,6 @@ router.post(`/:userId/projects/:projectId/:tickets/ticketId/delete`, deleteTicke
 router.post(`/:userId/projects/:projectId/comments/:commentId/delete`, deleteComment);
 router.post(`/:userId/projects/:projectId/sprints/:sprintId/delete`, deleteSprint);
 router.post(`/:userId/projects/:projectId/tickets/:ticketId/comments/:commentId/delete`, deleteTicketComment);
+router.post(`/:userId/projects/:projectId/members/:memberId/remove`, removeProjectMember);
 
 export default router;
