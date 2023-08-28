@@ -6,32 +6,31 @@ const ImagesSchema = new mongoose.Schema({
     caption: String,
 })
 
-const BugCommentSchema = new mongoose.Schema({
+const TicketCommentSchema = new mongoose.Schema({
     comment: String,
     date: String,
     author: String,
     avatar: String,
 })
 
-const BugSchema = new mongoose.Schema({
+const TicketSchema = new mongoose.Schema({
     title:  String,
     description: String,
     date: String,
     lastUpdate: String,
-    bugKey: String,
-    images: [{ type: ImagesSchema, ref: 'bugImage'}],
+    images: [{ type: ImagesSchema, ref: 'ticketImage'}],
     status: String,
     author: String,
     priority: String,
     tag: String,
     sprint: String,
-    comments: [{type: BugCommentSchema, ref: 'bugComment'}]
+    comments: [{type: TicketCommentSchema, ref: 'ticketComment'}]
 })
 
 const CommentSchema = new mongoose.Schema({
     comment: String,
     date: String,
-    author: String,
+    user: String,
 })
 
 const SprintSchema = new mongoose.Schema({
@@ -41,23 +40,36 @@ const SprintSchema = new mongoose.Schema({
     endDate: String,
     updated: String,
     status: String,
+    createdBy: String,
+})
+
+const MemberSchema = new mongoose.Schema({
+    memberId: { type: String, unique: true, sparse: true, allowNull: true },
+    username: String
+})
+
+const ActivitySchema = new mongoose.Schema({
+    activity: String, 
+    content: String,
+    date: String,
+    user: String,
 })
 
 // parent
 const ProjectSchema = new mongoose.Schema({
-    projectTitle: String,
+    owner: String,
+    title: String,
     startDate: String,   
     lastUpdate: String,
-    projectLead: String,
-    projectImage: String,
-    projectLink: String,
-    projectType: String,
+    image: String,
+    link: String,
     description: String,
-    projectKey: String,
     repository: String,
-    bugs: [{ type: BugSchema, ref: "bugs" }],
+    members: [{ type: MemberSchema, ref: "members" }],
+    tickets: [{ type: TicketSchema, ref: "tickets" }],
     comments: [{ type: CommentSchema, ref: "comments" }],
-    sprints: [{type: SprintSchema, ref: "sprints"}]
+    sprints: [{type: SprintSchema, ref: "sprints"}],
+    activities: [{ type: ActivitySchema, ref: "activities"}]
 })
 
 export const ProjectModel = mongoose.model("Project", ProjectSchema);

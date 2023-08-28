@@ -4,44 +4,55 @@ import { validateUser } from '../JWT.js';
 
 export const createComment = async (req, res) => {
     const { projectId } = req.params;
-    const { comment, author } = req.body;
+    const { comment } = req.body;
+
     const currentDate = new Date();
-    let token = req.headers.authorization;
-    if(validateUser(token)){
-        try {
-            await ProjectModel.findOneAndUpdate({ _id: projectId },
-                {
-                '$push': {
-                    'comments': {  
-                        comment, 
-                        date: currentDate, 
-                        author
-                    }
-                }
-            })
-            res.status(201).json("Comment created!");
-        } catch (error) {
-            res.status(409).json({ message: error.message });
-        }
+
+    const token = req.headers.authorization;
+    const user = validateUser(token);
+    if (!user) { return res.status(400).json('No valid token providied'); };
+    try {
+        const project = await ProjectModel.findOne({ _id: projectId });
+        if(!project){ return res.status(400).json('No Project Found')};
+         const memberIds = project.members.map(member => member.memberId);
+        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+
+
+        let commentData = { user: user.username, comment: comment, date: currentDate };
+
+        project.comments.unshift(commentData);
+
+        await project.save();
+
+        res.status(200).json(project.comments.reverse());
+    } catch (error) {
+        res.status(409).json({ message: error.message });
     }
-}
+};
 
 export const deleteComment = async (req, res) => {
     const { projectId, commentId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(commentId)) return res.status(404).send(`No comment with id: ${commentId}`);
-    let token = req.headers.authorization;
-    if(validateUser(token)){
-        try {
-            await ProjectModel.findOneAndUpdate(
-                { _id: projectId },
-                { $pull: { 'comments': { _id: commentId } } },
-                { multi: true }
-            )
-            res.json("Comment Deleted");
-        } catch (error) {
-            res.status(400).json({ message: error.message });
-        }
-    } else {
-        res.status(400).json('Invalid');
+
+    const token = req.headers.authorization;
+    const user = validateUser(token);
+    if (!user) { return res.status(400).json('No valid token providied'); };
+    try {
+        const project = await ProjectModel.findOne({ _id: projectId });
+        if(!project){ return res.status(400).json('No project found')};
+         const memberIds = project.members.map(member => member.memberId);
+        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+
+
+        const comment = project.comments.find(comment => comment._id.toString() === commentId);
+        if(!comment){ return res.status(400).json('No comment found')};
+        if(comment.user !== user.username && project.owner !== user.id ){ return res.status(403).json('Not authorized')};
+
+        project.comments = project.comments.filter(comment => comment._id.toString() !== commentId);
+
+        await project.save();
+
+        res.status(200).json(project.comments.reverse());
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
-}
+};

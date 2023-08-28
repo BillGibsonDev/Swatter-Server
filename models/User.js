@@ -7,19 +7,18 @@ const UserSchema = new mongoose.Schema({
         allowNull: false,
         unique: true,
     },
-    token: {
-        type: String,
-    },
     password: {
         type: String,
         allowNull: false,
     },
-    role: {
+    email: {
         type: String,
+        allowNull: false,
+        unique: true,
     },
-    lastLogin: {
-        type: String,
-    }
+    created: String,
+    token: String,
+    lastLogin: String,
 })
 
 export const UserModel = mongoose.model("User", UserSchema)
