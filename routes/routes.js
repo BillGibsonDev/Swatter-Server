@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { deleteComment, createComment } from '../controllers/CommentController.js';
 import { createTicket, getTicket, deleteTicket, updateTicket, createTicketComment, deleteTicketComment } from '../controllers/TicketController.js';
 import { getProjects, getProject, deleteProject, createProject, editProject, addProjectMember, removeProjectMember } from '../controllers/ProjectController.js';
-import { createUser, getUser, loginUser, updateUserEmail, updateUserPassword , updateUsername} from '../controllers/UserController.js';
+import { createUser, deleteAccount, getUser, loginUser, updateUserEmail, updateUserPassword , updateUsername} from '../controllers/UserController.js';
 import { getSprint, createSprint, updateSprint, deleteSprint } from '../controllers/SprintController.js';
 
 import { validateToken } from '../JWT.js';
@@ -19,7 +19,7 @@ router.get(`/:userId/projects/:projectId/tickets/:ticketId`, getTicket);
 router.post(`/users/login`, loginUser);
 router.get(`/users/:userId/profile`, getUser);
 router.get(`/:userId/projects/:projectId/sprints/:sprintId`, getSprint);
-router.post(`/users/validateTokens`, validateToken);
+router.post(`/users/:userId/validate-tokens`, validateToken);
 
 // update
 router.post(`/:userId/projects/:projectId/edit`, editProject);
@@ -45,5 +45,6 @@ router.post(`/:userId/projects/:projectId/comments/:commentId/delete`, deleteCom
 router.post(`/:userId/projects/:projectId/sprints/:sprintId/delete`, deleteSprint);
 router.post(`/:userId/projects/:projectId/tickets/:ticketId/comments/:commentId/delete`, deleteTicketComment);
 router.post(`/:userId/projects/:projectId/members/:memberId/remove`, removeProjectMember);
+router.post(`/users/:userId/delete-account`, deleteAccount);
 
 export default router;

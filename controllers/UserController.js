@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import cookieParser from "cookie-parser";
 import { UserModel } from "../models/User.js";
 import { createTokens, validateUser } from "../JWT.js";
+import { ProjectModel } from '../models/Project.js';
 
 export const getUser = async ( req, res ) => {
   const { userId } = req.params;
@@ -11,9 +12,9 @@ export const getUser = async ( req, res ) => {
   const token = req.headers.authorization;
   const user = validateUser(token);
   if (!user) { return res.status(400).json('No valid token providied'); };
-
+  
   try {
-    const userData = await UserModel.findOne({ _id: userId });
+    const userData = await UserModel.findById(userId);
     if(!userData){ return res.status(400).json('User does not exist')};
     if(user.id !== userId){ return res.status(400).json("Information doesn't match")};
 
@@ -138,6 +139,8 @@ export const updateUserEmail = async (req, res) =>{
 export const updateUsername = async (req, res) =>{
   const { username, password, newUsername } = req.body;
 
+  const regexUsername = new RegExp(username, "i");
+
   const token = req.headers.authorization;
   const user = validateUser(token);
   if (!user) { return res.status(400).json('No valid token providied'); };
@@ -154,6 +157,30 @@ export const updateUsername = async (req, res) =>{
     await userData.save();
 
     res.status(200).json('User updated');
+  }
+  catch(error){
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const deleteAccount = async (req, res) =>{
+  const { username, password} = req.body;
+
+  const token = req.headers.authorization;
+  const user = validateUser(token);
+  if (!user) { return res.status(400).json('No valid token providied'); };
+
+  try {
+    const userData = await UserModel.findOne({ username: username });
+    if(!userData){ return res.status(400).json('User does not exist')};
+    
+    const match = await bcrypt.compare(password, userData.password);
+    if(!match){ return res.status(400).json('Wrong username or password')};
+
+    await UserModel.findOneAndDelete({ username: username });
+    await ProjectModel.deleteMany({ owner: user.id });
+
+    res.status(200).json('Account Deleted');
   }
   catch(error){
     res.status(400).json({ message: error.message });
