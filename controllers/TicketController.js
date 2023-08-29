@@ -76,7 +76,7 @@ export const updateTicket = async (req, res) => {
         let index = project.tickets.findIndex(ticket => ticket._id.toString() === ticketId);
         if (index < 0) { return res.status(404).json('No ticket found'); }
 
-        let ticket = project.tickets[ticketIndex];
+        let ticket = project.tickets[index];
         ticket.description = description;
         ticket.status = status;
         ticket.priority = priority;
