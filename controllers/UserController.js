@@ -10,7 +10,8 @@ export const getUser = async ( req, res ) => {
   const { userId } = req.params;
 
   const token = req.headers.authorization;
-  const user = validateUser(token);
+  const user = await validateUser(token);
+
   if (!user) { return res.status(400).json('No valid token providied'); };
   
   try {
@@ -63,10 +64,10 @@ export const loginUser = async (req, res) =>{
 
   try {
     const user = await UserModel.findOne({ username: username });
-    if(!user){ return res.status(400).json('User does not exist')};
+    if(!user){ return res.status(400).json('Username is incorrect')};
     
     const match = await bcrypt.compare(password, user.password);
-    if(!match){ return res.status(400).json('User does not exist')};
+    if(!match){ return res.status(400).json('Password is incorrect')};
     
     const accessToken = createTokens(user);
     
@@ -88,7 +89,8 @@ export const updateUserPassword = async (req, res) =>{
   const { username, password, newpassword } = req.body;
 
   const token = req.headers.authorization;
-  const user = validateUser(token);
+  const user = await validateUser(token);
+
   if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
@@ -115,7 +117,8 @@ export const updateUserEmail = async (req, res) =>{
   const { username, password, newEmail } = req.body;
 
   const token = req.headers.authorization;
-  const user = validateUser(token);
+  const user = await validateUser(token);
+
   if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
@@ -142,7 +145,8 @@ export const updateUsername = async (req, res) =>{
   const regexUsername = new RegExp(username, "i");
 
   const token = req.headers.authorization;
-  const user = validateUser(token);
+  const user = await validateUser(token);
+
   if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
@@ -167,7 +171,8 @@ export const deleteAccount = async (req, res) =>{
   const { username, password} = req.body;
 
   const token = req.headers.authorization;
-  const user = validateUser(token);
+  const user = await validateUser(token);
+
   if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
@@ -178,7 +183,7 @@ export const deleteAccount = async (req, res) =>{
     if(!match){ return res.status(400).json('Wrong username or password')};
 
     await UserModel.findOneAndDelete({ username: username });
-    await ProjectModel.deleteMany({ owner: user.id });
+    await ProjectModel.deleteMany({ ownerId: user.id });
 
     res.status(200).json('Account Deleted');
   }

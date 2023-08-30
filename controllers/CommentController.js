@@ -9,13 +9,14 @@ export const createComment = async (req, res) => {
     const currentDate = new Date();
 
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No Project Found')};
          const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
 
         let commentData = { user: user.username, comment: comment, date: currentDate };
@@ -34,18 +35,19 @@ export const deleteComment = async (req, res) => {
     const { projectId, commentId } = req.params;
 
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
          const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
 
         const comment = project.comments.find(comment => comment._id.toString() === commentId);
         if(!comment){ return res.status(400).json('No comment found')};
-        if(comment.user !== user.username && project.owner !== user.id ){ return res.status(403).json('Not authorized')};
+        if(comment.user !== user.username && project.ownerId !== user.id ){ return res.status(403).json('Not authorized')};
 
         project.comments = project.comments.filter(comment => comment._id.toString() !== commentId);
 

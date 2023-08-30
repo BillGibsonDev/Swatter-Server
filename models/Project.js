@@ -18,6 +18,7 @@ const TicketSchema = new mongoose.Schema({
     description: String,
     date: String,
     lastUpdate: String,
+    assigned: String,
     images: [{ type: ImagesSchema, ref: 'ticketImage'}],
     status: String,
     author: String,
@@ -44,7 +45,7 @@ const SprintSchema = new mongoose.Schema({
 })
 
 const MemberSchema = new mongoose.Schema({
-    memberId: { type: String, unique: true, sparse: true, allowNull: true },
+    memberId: String,
     username: String
 })
 
@@ -57,6 +58,7 @@ const ActivitySchema = new mongoose.Schema({
 
 // parent
 const ProjectSchema = new mongoose.Schema({
+    ownerId: String,
     owner: String,
     title: String,
     startDate: String,   

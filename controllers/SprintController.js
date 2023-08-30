@@ -6,13 +6,14 @@ export const getSprint = async (req, res) => {
     const { projectId, sprintId } = req.params;
 
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
          const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
 
         const sprint = project.sprints.find(sprint => sprint._id.toString() === sprintId);
@@ -31,13 +32,14 @@ export const createSprint = async (req, res) => {
     const currentDate = new Date();
     
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
          const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
 
         let sprintData = { createdBy: user.username, goal, title, endDate, status, color, updated: currentDate,}
@@ -63,13 +65,14 @@ export const updateSprint = async (req, res) => {
     const currentDate = new Date();
     
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findOne({ "_id": projectId });
         if(!project){ return res.status(400).json('No project found')};
           const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
         project.lastUpdate = currentDate;
 
@@ -112,13 +115,14 @@ export const deleteSprint = async (req, res) => {
     const currentDate = new Date();
 
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project =  await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
           const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
         project.lastUpdate = currentDate;
 

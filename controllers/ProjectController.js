@@ -5,10 +5,11 @@ import { validateUser } from '../JWT.js';
 
 export const getProjects = async (req, res) => {
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
-        const ownedProjects = await ProjectModel.find({ 'owner': user.id }); 
+        const ownedProjects = await ProjectModel.find({ 'ownerId': user.id }); 
         const memberOfProjects = await ProjectModel.find({ 'members.memberId': user.id }); 
         const projects = ownedProjects.concat(memberOfProjects);
 
@@ -22,14 +23,15 @@ export const getProjects = async (req, res) => {
 export const getProject = async (req, res) => { 
     const { projectId } = req.params;
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findById(projectId);
         if(!project){ return res.status(404).json('No project found'); };
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
         
         res.status(200).json(project);
     } catch (error) {
@@ -39,13 +41,15 @@ export const getProject = async (req, res) => {
 
 export const createProject = async (req, res) => {
     const { title, image, link, description, repository } = req.body;
+    
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         await ProjectModel.create({ 
             title, 
-            owner: user.id, 
+            ownerId: user.id, 
+            owner: user.username,
             image, 
             link, 
             description, 
@@ -71,12 +75,13 @@ export const editProject = async (req, res) => {
     const currentDate = new Date();
 
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user){ return res.status(403).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findById(projectId);
         if(!project){ return res.status(404).json('No project found'); }
-        if(project.owner !== user.id){ return res.status(403).json('Not authorized'); }
+        if(project.ownerId !== user.id){ return res.status(403).json('Not authorized'); }
         project.lastUpdate = currentDate;
 
         await ProjectModel.findOneAndUpdate({ "_id": projectId },
@@ -107,12 +112,13 @@ export const editProject = async (req, res) => {
 export const deleteProject = async (req, res) => {
     const { userId, projectId } = req.params;
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findById(projectId);
         if(!project){ return res.status(404).json('No project found'); }
-        if(project.owner !== user.id){ return res.status(403).json('Not authorized'); }
+        if(project.ownerId !== user.id){ return res.status(403).json('Not authorized'); }
         await ProjectModel.findByIdAndDelete(projectId);
         res.status(200).json(`${project.title} deleted`);
     } catch (error) {
@@ -128,23 +134,28 @@ export const addProjectMember = async (req, res) => {
     const currentDate = new Date();
 
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findById(projectId);
         if(!project){ return res.status(404).json('No project found'); };
-        if(project.owner !== user.id){ return res.status(403).json('Not authorized'); };
+        if(project.ownerId !== user.id){ return res.status(403).json('Not authorized'); };
 
         const member = await UserModel.findOne({ username: { $regex: regexUsername } });
         if(!member){ return res.status(404).json('No user found'); };
-        if(project.members.find(mem => mem.username === regexUsername)){ return res.status(400).json('Member already added')};
+        if (project.members.some(mem => mem.memberId.toString() === member._id.toString())) {
+            return res.status(400).json('Member already added');
+        }
 
         let data = {
             username: username,
-            memberId: member._id
+            memberId: member._id.toString()
         };
 
-        project.members.unshift(data);
+        let array = project.members;
+        array.unshift(data);
+        project.members = array;
 
         let activity = { activity: `added member ${username}`, date: currentDate, user: user.username };
         project.activities.unshift(activity);
@@ -166,14 +177,15 @@ export const removeProjectMember = async (req, res) => {
     const currentDate = new Date();
 
     const token = req.headers.authorization;
-    const user = validateUser(token);
+    const user = await validateUser(token);
+
     if (!user) { return res.status(400).json('No valid token providied'); };
     try {
         const project = await ProjectModel.findById(projectId);
         if(!project){ return res.status(404).json('No project found'); };
         
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.owner ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
         const member = await UserModel.findById(memberId);
         if(!member){ return res.status(404).json('No user found'); };
