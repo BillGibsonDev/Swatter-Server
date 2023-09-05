@@ -25,6 +25,7 @@ const TicketSchema = new mongoose.Schema({
     priority: String,
     tag: String,
     sprint: String,
+    key: String,
     comments: [{type: TicketCommentSchema, ref: 'ticketComment'}]
 })
 
@@ -38,7 +39,7 @@ const SprintSchema = new mongoose.Schema({
     title: String,
     goal: String,
     color: String,
-    endDate: String,
+    deadline: String,
     updated: String,
     status: String,
     createdBy: String,

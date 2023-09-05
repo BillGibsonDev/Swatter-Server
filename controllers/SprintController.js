@@ -12,7 +12,7 @@ export const getSprint = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
-         const memberIds = project.members.map(member => member.memberId);
+        const memberIds = project.members.map(member => member.memberId);
         if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
 
@@ -26,7 +26,7 @@ export const getSprint = async (req, res) => {
 };
 
 export const createSprint = async (req, res) => {
-    const { goal, color, endDate, title, status } = req.body;
+    const { goal, color, deadline, title, status } = req.body;
     const { projectId } = req.params;
     
     const currentDate = new Date();
@@ -42,7 +42,7 @@ export const createSprint = async (req, res) => {
         if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
 
-        let sprintData = { createdBy: user.username, goal, title, endDate, status, color, updated: currentDate,}
+        let sprintData = { createdBy: user.username, goal, title, deadline, status, color, updated: currentDate,}
 
         project.lastUpdate = currentDate;
         project.sprints.unshift(sprintData);
@@ -71,7 +71,7 @@ export const updateSprint = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ "_id": projectId });
         if(!project){ return res.status(400).json('No project found')};
-          const memberIds = project.members.map(member => member.memberId);
+        const memberIds = project.members.map(member => member.memberId);
         if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
         project.lastUpdate = currentDate;
@@ -81,7 +81,7 @@ export const updateSprint = async (req, res) => {
                 $set:{
                     "sprints.$.goal": goal,
                     "sprints.$.title": title,
-                    "sprints.$.endDate": endDate,
+                    "sprints.$.deadline": deadline,
                     "sprints.$.color": color,
                     "sprints.$.status": status,
                     "sprints.$.updated": currentDate,
@@ -121,27 +121,21 @@ export const deleteSprint = async (req, res) => {
     try {
         const project =  await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
-          const memberIds = project.members.map(member => member.memberId);
+
+        const memberIds = project.members.map(member => member.memberId);
         if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
         project.lastUpdate = currentDate;
 
-        await ProjectModel.findOneAndUpdate(
-            { _id: projectId },
-            { 
-                $set: { lastUpdate: currentDate },
-                $pull: { 'sprints': { _id: sprintId }}
-            },
-            { multi: true }
-        );
+        let tickets = project.tickets;
 
-        await ProjectModel.updateMany(
-            { _id: projectId, 'tickets.sprint': sprintTitle}, 
-            { $set:{ 
-                'tickets.$.sprint': ''
-            }},
-            { multi: true }
-        );
+        tickets.forEach((ticket) => {
+            if(ticket.sprint === sprintTitle){
+                ticket.sprint =  '';
+            }
+        })
+
+        project.sprints = project.sprints.filter(sprint => sprint._id.toString() !== sprintId);
 
         let activity = { activity: `deleted sprint ${sprintTitle}`, date: currentDate, user: user.username };
         project.activities.unshift(activity);
