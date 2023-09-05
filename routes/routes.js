@@ -40,7 +40,7 @@ router.post(`/:userId/projects/:projectId/members/add`, addProjectMember);
 
 // delete
 router.delete(`/:userId/projects/:projectId/delete`, deleteProject);
-router.post(`/:userId/projects/:projectId/:tickets/ticketId/delete`, deleteTicket);
+router.post(`/:userId/projects/:projectId/tickets/:ticketId/delete`, deleteTicket);
 router.post(`/:userId/projects/:projectId/comments/:commentId/delete`, deleteComment);
 router.post(`/:userId/projects/:projectId/sprints/:sprintId/delete`, deleteSprint);
 router.post(`/:userId/projects/:projectId/tickets/:ticketId/comments/:commentId/delete`, deleteTicketComment);

@@ -40,12 +40,18 @@ export const createTicket = async (req, res) => {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No project found')};
 
-         const memberIds = project.members.map(member => member.memberId);
+        const memberIds = project.members.map(member => member.memberId);
         if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
 
         project.lastUpdate = currentDate;
         
-        let data = { title, description, date: currentDate, status, assigned, author: user.username, priority, tag, sprint, images, lastUpdate: currentDate };
+        function generateKey() {
+            const min = 1000;
+            const max = 9999;
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        let data = { title, description, date: currentDate, status, assigned, author: user.username, priority, tag, sprint, images, lastUpdate: currentDate, key: generateKey() };
         project.tickets.unshift(data);
 
         let activity = { activity: `created ticket ${title}`, date: currentDate, user: user.username };
@@ -122,9 +128,8 @@ export const deleteTicket = async (req, res) => {
 
         project.tickets = project.tickets.filter(ticket => ticket._id.toString() !== ticketId);
 
-        let activity = { activity: `deleted ${project.tickets[index].title}`, date: currentDate, user: user.username };
+        let activity = { activity: `deleted ticket`, date: currentDate, user: user.username };
         
-        project.tickets.splice(index, 1);
         project.activities.unshift(activity);
 
         await project.save();
