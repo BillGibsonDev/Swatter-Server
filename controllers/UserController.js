@@ -89,7 +89,7 @@ export const loginUser = async (req, res) =>{
 export const updateUserPassword = async (req, res) =>{
   const { username, password, newpassword } = req.body;
 
-  
+  const regexUsername = new RegExp(username, "i");
   const token = req.headers.authorization;
   const user = await validateUser(token);
 

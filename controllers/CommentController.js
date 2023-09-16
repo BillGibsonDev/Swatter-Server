@@ -15,9 +15,8 @@ export const createComment = async (req, res) => {
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No Project Found')};
-         const memberIds = project.members.map(member => member.memberId);
+        const memberIds = project.members.map(member => member.memberId);
         if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
-
 
         let commentData = { user: user.username, comment: comment, date: currentDate };
 

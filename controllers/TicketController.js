@@ -101,7 +101,7 @@ export const updateTicket = async (req, res) => {
         
         await project.save();
 
-        res.status(200).json("Ticket Updated");
+        res.status(200).json(ticket);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
