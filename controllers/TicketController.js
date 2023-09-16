@@ -13,9 +13,8 @@ export const getTicket = async (req, res) => {
         const project = await ProjectModel.findOne({ _id: projectId});
         if(!project){ return res.status(404).json('No project found');};
 
-         const memberIds = project.members.map(member => member.memberId);
+        const memberIds = project.members.map(member => member.memberId);
         if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
-
 
         const ticket = project.tickets.find( ticket => ticket._id.toString() === ticketId);
         if(!ticket){ return res.status(404).json('No ticket found');}
