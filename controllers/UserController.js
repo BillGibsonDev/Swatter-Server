@@ -60,19 +60,20 @@ export const createUser = async (req, res) => {
 export const loginUser = async (req, res) =>{
   const { username, password } = req.body;
 
+  const regexUsername = new RegExp(username, "i");
   const currentDate = new Date();
 
   try {
-    const user = await UserModel.findOne({ username: username });
+    const user = await UserModel.findOne({ username: { $regex: regexUsername } });
     if(!user){ return res.status(400).json('Username is incorrect')};
     
     const match = await bcrypt.compare(password, user.password);
-    if(!match){ return res.status(400).json('Password is incorrect')};
+    if(!match){ return res.status(400).json('Password is Incorrect. Try Again' )};
     
     const accessToken = createTokens(user);
     
     await UserModel.findOneAndUpdate(
-      { username: username }, 
+      { username: { $regex: regexUsername } }, 
       { 
         token: accessToken, 
         lastLogin: currentDate 
@@ -88,17 +89,18 @@ export const loginUser = async (req, res) =>{
 export const updateUserPassword = async (req, res) =>{
   const { username, password, newpassword } = req.body;
 
+  const regexUsername = new RegExp(username, "i");
   const token = req.headers.authorization;
   const user = await validateUser(token);
 
   if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
-    const userData = await UserModel.findOne({ username: username });
+    const userData = await UserModel.findOne({ username: { $regex: regexUsername } });
     if(!userData){ return res.status(400).json('User does not exist')};
     
     const match = await bcrypt.compare(password, userData.password);
-    if(!match){ return res.status(400).json('Wrong username or password')};
+    if(!match){ return res.status(400).json('Password is Incorrect. Try Again')};
 
     const hashedPassword = await bcrypt.hash(newpassword, 10);
 
@@ -116,17 +118,18 @@ export const updateUserPassword = async (req, res) =>{
 export const updateUserEmail = async (req, res) =>{
   const { username, password, newEmail } = req.body;
 
+  const regexUsername = new RegExp(username, "i");
   const token = req.headers.authorization;
   const user = await validateUser(token);
 
   if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
-    const userData = await UserModel.findOne({ username: username });
+    const userData = await UserModel.findOne({ username: { $regex: regexUsername } });
     if(!userData){ return res.status(400).json('User does not exist')};
     
     const match = await bcrypt.compare(password, userData.password);
-    if(!match){ return res.status(400).json('Wrong username or password')};
+    if(!match){ return res.status(400).json('Password is Incorrect. Try Again')};
 
     userData.email = newEmail;
 
@@ -154,7 +157,7 @@ export const updateUsername = async (req, res) =>{
     if(!userData){ return res.status(400).json('User does not exist')};
     
     const match = await bcrypt.compare(password, userData.password);
-    if(!match){ return res.status(400).json('Wrong username or password')};
+    if(!match){ return res.status(400).json('Password is Incorrect. Try Again')};
 
     userData.username = newUsername;
 
@@ -170,19 +173,20 @@ export const updateUsername = async (req, res) =>{
 export const deleteAccount = async (req, res) =>{
   const { username, password} = req.body;
 
+  const regexUsername = new RegExp(username, "i");
   const token = req.headers.authorization;
   const user = await validateUser(token);
 
   if (!user) { return res.status(400).json('No valid token providied'); };
 
   try {
-    const userData = await UserModel.findOne({ username: username });
+    const userData = await UserModel.findOne({ username: { $regex: regexUsername } });
     if(!userData){ return res.status(400).json('User does not exist')};
     
     const match = await bcrypt.compare(password, userData.password);
-    if(!match){ return res.status(400).json('Wrong username or password')};
+    if(!match){ return res.status(400).json('Password is Incorrect. Try Again')};
 
-    await UserModel.findOneAndDelete({ username: username });
+    await UserModel.findOneAndDelete({ username: { $regex: regexUsername } });
     await ProjectModel.deleteMany({ ownerId: user.id });
 
     res.status(200).json('Account Deleted');
