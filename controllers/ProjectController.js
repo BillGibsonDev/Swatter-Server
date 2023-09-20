@@ -89,7 +89,6 @@ export const editProject = async (req, res) => {
                 $set: {
                     title,
                     lastUpdate: currentDate,
-                    author,
                     image,
                     link,
                     description,
@@ -103,7 +102,7 @@ export const editProject = async (req, res) => {
 
         await project.save();
 
-        res.status(200).json(`${project.title} updated`);
+        res.status(200).json(project);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

@@ -26,7 +26,7 @@ export const getTicket = async (req, res) => {
 };
 
 export const createTicket = async (req, res) => {
-    const { title, assigned, description, status, priority, tag, images, sprint } = req.body;
+    const { title, assigned, description, status, priority, tag, images, sprint, link } = req.body;
     const { projectId } = req.params;
 
     const currentDate = new Date();
@@ -50,7 +50,7 @@ export const createTicket = async (req, res) => {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        let data = { title, description, date: currentDate, status, assigned, author: user.username, priority, tag, sprint, images, lastUpdate: currentDate, key: generateKey() };
+        let data = { title, description, date: currentDate, status, assigned, author: user.username, priority, tag, images, sprint, lastUpdate: currentDate, key: generateKey(), link };
         project.tickets.unshift(data);
 
         let activity = { activity: `created ticket ${title}`, date: currentDate, user: user.username };
@@ -66,7 +66,7 @@ export const createTicket = async (req, res) => {
 
 export const updateTicket = async (req, res) => {
     const { projectId, ticketId } = req.params;
-    const { description, status, priority, tag, sprint, images, assigned } = req.body;
+    const { description, status, priority, tag, sprint, images, assigned, link } = req.body;
     
     const currentDate = new Date();
 
@@ -93,6 +93,7 @@ export const updateTicket = async (req, res) => {
         ticket.images = images;
         ticket.lastUpdate = currentDate;
         ticket.assigned = assigned;
+        ticket.link = link;
 
         project.lastUpdate = currentDate;
 
@@ -166,7 +167,7 @@ export const createTicketComment = async (req, res) => {
 
         await project.save();
 
-        res.status(200).json("Comment created!");
+        res.status(200).json(ticket.comments);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -197,7 +198,7 @@ export const deleteTicketComment = async (req, res) => {
         
         await project.save();
 
-        res.status(200).json("Comment Deleted!");
+        res.status(200).json(ticket.comments);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

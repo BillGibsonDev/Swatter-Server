@@ -9,7 +9,7 @@ const ImagesSchema = new mongoose.Schema({
 const TicketCommentSchema = new mongoose.Schema({
     comment: String,
     date: String,
-    author: String,
+    user: String,
     avatar: String,
 })
 
@@ -26,6 +26,7 @@ const TicketSchema = new mongoose.Schema({
     tag: String,
     sprint: String,
     key: String,
+    link: String,
     comments: [{type: TicketCommentSchema, ref: 'ticketComment'}]
 })
 
