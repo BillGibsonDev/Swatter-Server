@@ -50,7 +50,7 @@ export const createTicket = async (req, res) => {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        let data = { title, description, date: currentDate, status, assigned, author: user.username, priority, tag, images, sprint, lastUpdate: currentDate, key: generateKey(), link };
+        let data = { title, description, date: currentDate, status, assigned, author: user.username, priority, tag, images, sprint, lastUpdate: null, key: generateKey(), link };
         project.tickets.unshift(data);
 
         let activity = { activity: `created ticket ${title}`, date: currentDate, user: user.username };
@@ -162,8 +162,46 @@ export const createTicketComment = async (req, res) => {
         let ticket = project.tickets.find(ticket => ticket._id.toString() === ticketId);
         if(!ticket){ return res.status(404).json('No ticket found')};
 
-        let commentData = { comment: comment, date: currentDate, user: user.username }
+        const commentData = { comment: comment, date: currentDate, user: user.username, edited: false, userAvatar: user.avatar }
         ticket.comments.unshift(commentData);
+
+        ticket.lastUpdate = currentDate;
+        await project.save();
+
+        res.status(200).json(ticket.comments);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+export const updateTicketComment = async (req, res) => {
+    const { projectId, ticketId, commentId } = req.params;
+    const { comment } = req.body;
+    
+    const currentDate = new Date();
+
+    const token = req.headers.authorization;
+    const user = await validateUser(token);
+
+    if (!user) { return res.status(400).json('No valid token providied'); };
+    try { 
+        const project = await ProjectModel.findOne({ _id: projectId });
+        if(!project){ return res.status(404).json('No project found')};
+
+        const memberIds = project.members.map(member => member.memberId);
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+
+        project.lastUpdate = currentDate;
+
+        const ticket = project.tickets.find(ticket => ticket._id.toString() === ticketId);
+        if(!ticket){ return res.status(404).json('No ticket found')};
+
+        let ticketComment = ticket.comments.find(comment => comment._id.toString() === commentId);
+        if(!ticketComment){ return res.status(404).json('No comment found')};
+
+        ticket.lastUpdate = currentDate;
+        ticketComment.comment = comment;
+        ticketComment.edited = true;
 
         await project.save();
 

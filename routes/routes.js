@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { deleteComment, createComment } from '../controllers/CommentController.js';
 import { createTicket, getTicket, deleteTicket, updateTicket, createTicketComment, deleteTicketComment } from '../controllers/TicketController.js';
 import { getProjects, getProject, deleteProject, createProject, editProject, addProjectMember, removeProjectMember } from '../controllers/ProjectController.js';
-import { createUser, deleteAccount, getUser, loginUser, updateUserEmail, updateUserPassword , updateUsername} from '../controllers/UserController.js';
+import { createUser, deleteAccount, getUser, loginUser, updateUserAvatar, updateUserEmail, updateUserPassword , updateUsername} from '../controllers/UserController.js';
 import { getSprint, createSprint, updateSprint, deleteSprint } from '../controllers/SprintController.js';
 
 import { validateToken } from '../JWT.js';
@@ -27,6 +27,7 @@ router.post(`/:userId/projects/:projectId/tickets/:ticketId/update`, updateTicke
 router.post(`/users/:userId/update/email`, updateUserEmail);
 router.post(`/users/:userId/update/password`, updateUserPassword);
 router.post(`/users/:userId/update/username`, updateUsername);
+router.post(`/users/:userId/update/avatar`, updateUserAvatar);
 router.post(`/:userId/projects/:projectId/sprints/:sprintId/update`, updateSprint);
 
 // create

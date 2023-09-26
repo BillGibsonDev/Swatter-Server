@@ -3,14 +3,21 @@ import mongoose from 'mongoose';
 // children
 const ImagesSchema = new mongoose.Schema({
     image: String,
-    caption: String,
 })
 
 const TicketCommentSchema = new mongoose.Schema({
     comment: String,
     date: String,
     user: String,
-    avatar: String,
+    edited: Boolean,
+    userAvatar: String,
+})
+
+const ActivitySchema = new mongoose.Schema({
+    activity: String, 
+    content: String,
+    date: String,
+    user: String,
 })
 
 const TicketSchema = new mongoose.Schema({
@@ -27,13 +34,15 @@ const TicketSchema = new mongoose.Schema({
     sprint: String,
     key: String,
     link: String,
-    comments: [{type: TicketCommentSchema, ref: 'ticketComment'}]
+    comments: [{type: TicketCommentSchema, ref: 'ticketComment'}],
 })
 
 const CommentSchema = new mongoose.Schema({
     comment: String,
     date: String,
     user: String,
+    edited: Boolean,
+    userAvatar: String,
 })
 
 const SprintSchema = new mongoose.Schema({
@@ -49,13 +58,6 @@ const SprintSchema = new mongoose.Schema({
 const MemberSchema = new mongoose.Schema({
     memberId: String,
     username: String
-})
-
-const ActivitySchema = new mongoose.Schema({
-    activity: String, 
-    content: String,
-    date: String,
-    user: String,
 })
 
 // parent

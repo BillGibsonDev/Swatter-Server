@@ -7,6 +7,7 @@ export const createTokens = (user) => {
     { 
       username: user.username, 
       id: user._id, 
+      avatar: user.avatar
     },
     `${process.env.NODE_ENV_JWT_SECRET}`,
     { expiresIn: '16h' }

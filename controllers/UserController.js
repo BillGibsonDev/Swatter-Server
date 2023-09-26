@@ -19,11 +19,12 @@ export const getUser = async ( req, res ) => {
     if(!userData){ return res.status(400).json('User does not exist')};
     if(user.id !== userId){ return res.status(400).json("Information doesn't match")};
 
-    let usersData = { 
+    const usersData = { 
       username: userData.username,
       email: userData.email,
       lastLogin: userData.lastLogin,
       created: userData.created,
+      avatar: userData.avatar
     };
 
     res.status(200).json(usersData);
@@ -33,7 +34,7 @@ export const getUser = async ( req, res ) => {
 }
 
 export const createUser = async (req, res) => {
-  const { username, password, email } = req.body;
+  const { username, password, email, avatar } = req.body;
   const regexUsername = new RegExp(username, "i");
   const regexEmail = new RegExp(email, "i");
   try {
@@ -44,11 +45,14 @@ export const createUser = async (req, res) => {
     if(usernameCheck){ return res.status(400).json('Username already exists')};
     if(emailCheck){ return res.status(400).json('Email already in use')};
 
+    if(!avatar){ avatar = 'https://i.ibb.co/DzktvF7/avatar-1577909-640.png' };
+
     await UserModel.create({
       username,
       password: hashedPassword,
       email,
       created: new Date(),
+      avatar,
     });
 
     res.status(200).json('Account created');
@@ -80,7 +84,7 @@ export const loginUser = async (req, res) =>{
       }
     );
 
-    res.status(200).json({token: accessToken, id: user._id, username: user.username });
+    res.status(200).json({token: accessToken, id: user._id, username: user.username, avatar: user.avatar });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -115,6 +119,36 @@ export const updateUserPassword = async (req, res) =>{
   }
 };
 
+export const updateUserAvatar = async (req, res) =>{
+  const { avatar } = req.body;
+
+  const token = req.headers.authorization;
+  const user = await validateUser(token);
+  if (!user) { return res.status(400).json('No valid token providied'); };
+
+  try {
+    const userData = await UserModel.findOne({ username: user.username });
+    if(!userData){ return res.status(400).json('User does not exist')};
+
+    userData.avatar = avatar;
+
+    await userData.save();
+
+    const usersData = { 
+      username: userData.username,
+      email: userData.email,
+      lastLogin: userData.lastLogin,
+      created: userData.created,
+      avatar: avatar
+    };
+
+    res.status(200).json(usersData);
+  }
+  catch(error){
+    res.status(400).json({ message: error.message });
+  }
+};
+
 export const updateUserEmail = async (req, res) =>{
   const { username, password, newEmail } = req.body;
 
@@ -135,7 +169,15 @@ export const updateUserEmail = async (req, res) =>{
 
     await userData.save();
 
-    res.status(200).json('Email updated');
+    const usersData = { 
+      username: userData.username,
+      email: newEmail,
+      lastLogin: userData.lastLogin,
+      created: userData.created,
+      avatar: userData.avatar
+    };
+
+    res.status(200).json(usersData);
   }
   catch(error){
     res.status(400).json({ message: error.message });
@@ -163,7 +205,15 @@ export const updateUsername = async (req, res) =>{
 
     await userData.save();
 
-    res.status(200).json('User updated');
+    const usersData = { 
+      username: newUsername,
+      email: userData.email,
+      lastLogin: userData.lastLogin,
+      created: userData.created,
+      avatar: userData.avatar
+    };
+
+    res.status(200).json(usersData);
   }
   catch(error){
     res.status(400).json({ message: error.message });
