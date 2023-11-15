@@ -16,7 +16,7 @@ export const createComment = async (req, res) => {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No Project Found')};
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not a member of project'); };
 
         let commentData = { user: user.username, comment: comment, date: currentDate, userAvatar: user.avatar };
 
@@ -26,7 +26,7 @@ export const createComment = async (req, res) => {
 
         res.status(200).json(project.comments);
     } catch (error) {
-        res.status(409).json({ message: error.message });
+        res.status(409).json(error.message);
     }
 };
 
@@ -42,11 +42,11 @@ export const updateComment = async (req, res) => {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No project found')};
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not a member of project'); };
 
         const commentData = project.comments.find(comment => comment._id.toString() === commentId);
         if(!commentData){ return res.status(400).json('No comment found')};
-        if(commentData.user !== user.username && project.ownerId !== user.id ){ return res.status(403).json('Not authorized')};
+        if(commentData.user !== user.username && project.ownerId !== user.id ){ return res.status(401).json('Not authorized')};
 
         commentData.comment = comment;
         commentData.edited = true;
@@ -55,7 +55,7 @@ export const updateComment = async (req, res) => {
 
         res.status(200).json(project.comments);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };
 
@@ -74,7 +74,7 @@ export const deleteComment = async (req, res) => {
 
         const comment = project.comments.find(comment => comment._id.toString() === commentId);
         if(!comment){ return res.status(400).json('No comment found')};
-        if(comment.user !== user.username && project.ownerId !== user.id ){ return res.status(403).json('Not authorized')};
+        if(comment.user !== user.username && project.ownerId !== user.id ){ return res.status(401).json('Not authorized')};
 
         project.comments = project.comments.filter(comment => comment._id.toString() !== commentId);
 
@@ -82,6 +82,6 @@ export const deleteComment = async (req, res) => {
 
         res.status(200).json(project.comments);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };

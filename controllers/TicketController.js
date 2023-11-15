@@ -21,7 +21,7 @@ export const getTicket = async (req, res) => {
 
         res.status(200).json(ticket);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status(404).json(error.message);
     }
 };
 
@@ -60,7 +60,7 @@ export const createTicket = async (req, res) => {
 
         res.status(200).json("Ticket Created");
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };
 
@@ -79,7 +79,7 @@ export const updateTicket = async (req, res) => {
         if (!project) { return res.status(404).json('No project found'); }
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not a member of project'); };
 
         let index = project.tickets.findIndex(ticket => ticket._id.toString() === ticketId);
         if (index < 0) { return res.status(404).json('No ticket found'); }
@@ -104,7 +104,7 @@ export const updateTicket = async (req, res) => {
 
         res.status(200).json(ticket);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };
 
@@ -122,7 +122,7 @@ export const deleteTicket = async (req, res) => {
         if(!project){ return res.status(404).json('No project found')};
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not a member of project'); };
 
         project.lastUpdate = currentDate;
 
@@ -136,7 +136,7 @@ export const deleteTicket = async (req, res) => {
 
         res.status(200).json("Ticket Deleted");
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };
 
@@ -170,7 +170,7 @@ export const createTicketComment = async (req, res) => {
 
         res.status(200).json(ticket.comments);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };
 
@@ -189,7 +189,7 @@ export const updateTicketComment = async (req, res) => {
         if(!project){ return res.status(404).json('No project found')};
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not a member of project'); };
 
         project.lastUpdate = currentDate;
 
@@ -207,7 +207,7 @@ export const updateTicketComment = async (req, res) => {
 
         res.status(200).json(ticket.comments);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };
 
@@ -225,7 +225,7 @@ export const deleteTicketComment = async (req, res) => {
         if(!project){ return res.status(404).json('No project found')};
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not a member of project'); };
 
         project.lastUpdate = currentDate;
 
@@ -238,6 +238,6 @@ export const deleteTicketComment = async (req, res) => {
 
         res.status(200).json(ticket.comments);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };

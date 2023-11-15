@@ -16,7 +16,7 @@ export const getProjects = async (req, res) => {
         res.status(200).json(projects);
     } catch (error) {
         console.log(error)
-        res.status(404).json({ message: error.message });
+        res.status(404).json(error.message);
     }
 };
 
@@ -35,7 +35,7 @@ export const getProject = async (req, res) => {
         
         res.status(200).json(project);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status(404).json(error.message);
     }
 };
 
@@ -64,7 +64,7 @@ export const createProject = async (req, res) => {
         res.status(200).json("Project Created!");
     } catch (error) {
         console.log(error)
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     } 
 };
 
@@ -104,7 +104,7 @@ export const editProject = async (req, res) => {
 
         res.status(200).json(project);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };
 
@@ -121,7 +121,7 @@ export const deleteProject = async (req, res) => {
         await ProjectModel.findByIdAndDelete(projectId);
         res.status(200).json(`${project.title} deleted`);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };
 
@@ -165,7 +165,7 @@ export const addProjectMember = async (req, res) => {
         res.status(200).json(project.members);
     } catch (error) {
         console.log(error)
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 };
 
@@ -199,6 +199,6 @@ export const removeProjectMember = async (req, res) => {
 
         res.status(200).json(project.members);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json(error.message);
     }
 }
