@@ -37,22 +37,22 @@ export const createUser = async (req, res) => {
   const { username, password, email, avatar } = req.body;
   const regexUsername = new RegExp(username, "i");
   const regexEmail = new RegExp(email, "i");
+  
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const usernameCheck = await UserModel.findOne({ username: { $regex: regexUsername } });
     const emailCheck = await UserModel.findOne({ email: { $regex: regexEmail } });
+    
     if(usernameCheck){ return res.status(400).json('Username already exists')};
     if(emailCheck){ return res.status(400).json('Email already in use')};
-
-    if(!avatar){ avatar = 'https://i.ibb.co/DzktvF7/avatar-1577909-640.png' };
 
     await UserModel.create({
       username,
       password: hashedPassword,
       email,
       created: new Date(),
-      avatar,
+      avatar: avatar ? avatar : 'https://i.ibb.co/DzktvF7/avatar-1577909-640.png',
     });
 
     res.status(200).json('Account created');
