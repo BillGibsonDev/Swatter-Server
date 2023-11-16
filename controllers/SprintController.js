@@ -8,7 +8,7 @@ export const getSprint = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No Project Found.')};
@@ -34,7 +34,7 @@ export const createSprint = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No Project Found.')};
@@ -67,7 +67,7 @@ export const updateSprint = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try {
         const project = await ProjectModel.findOne({ "_id": projectId });
         if(!project){ return res.status(400).json('No Project Found.')};
@@ -117,7 +117,7 @@ export const deleteSprint = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try {
         const project =  await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(400).json('No Project Found.')};

@@ -7,8 +7,8 @@ export const getTicket = async (req, res) => {
 
     const token = req.headers.authorization;
     const user = await validateUser(token);
-
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try {
         const project = await ProjectModel.findOne({ _id: projectId});
         if(!project){ return res.status(404).json('No Project Found.');};
@@ -34,7 +34,7 @@ export const createTicket = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No Project Found.')};
@@ -73,7 +73,7 @@ export const updateTicket = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try {
         const project = await ProjectModel.findOne({ "_id": projectId });
         if (!project) { return res.status(404).json('No Project Found.'); }
@@ -116,7 +116,7 @@ export const deleteTicket = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No Project Found.')};
@@ -149,7 +149,7 @@ export const createTicketComment = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try { 
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No Project Found.')};
@@ -183,7 +183,7 @@ export const updateTicketComment = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try { 
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No Project Found.')};
@@ -219,7 +219,7 @@ export const deleteTicketComment = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
+    if (!user) { return res.status(401).json('No Valid Token Provided.')};
     try { 
         const project = await ProjectModel.findOne({ _id: projectId });
         if(!project){ return res.status(404).json('No Project Found.')};

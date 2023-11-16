@@ -12,7 +12,7 @@ export const getUser = async ( req, res ) => {
   const token = req.headers.authorization;
   const user = await validateUser(token);
 
-  if (!user) { return res.status(400).json('No Valid Token Provided.')};
+  if (!user) { return res.status(401).json('No Valid Token Provided.')};
   
   try {
     const userData = await UserModel.findById(userId);
@@ -97,7 +97,7 @@ export const updateUserPassword = async (req, res) =>{
   const token = req.headers.authorization;
   const user = await validateUser(token);
 
-  if (!user) { return res.status(400).json('No Valid Token Provided.')};
+  if (!user) { return res.status(401).json('No Valid Token Provided.')};
 
   try {
     const userData = await UserModel.findOne({ username: { $regex: regexUsername } });
@@ -127,7 +127,7 @@ export const updateUserAvatar = async (req, res) =>{
   const token = req.headers.authorization;
   const user = await validateUser(token);
 
-  if (!user) { return res.status(400).json('No Valid Token Provided.')};
+  if (!user) { return res.status(401).json('No Valid Token Provided.')};
 
   try {
     const userData = await UserModel.findOne({ username: user.username });
@@ -199,7 +199,7 @@ export const updateUsername = async (req, res) =>{
   const token = req.headers.authorization;
   const user = await validateUser(token);
 
-  if (!user) { return res.status(400).json('No Valid Token Provided.')};
+  if (!user) { return res.status(401).json('No Valid Token Provided.')};
 
   try {
     const userData = await UserModel.findOne({ username: { $regex: regexUsername }});
@@ -236,7 +236,7 @@ export const deleteAccount = async (req, res) =>{
   const token = req.headers.authorization;
   const user = await validateUser(token);
 
-  if (!user) { return res.status(400).json('No Valid Token Provided.')};
+  if (!user) { return res.status(401).json('No Valid Token Provided.')};
 
   try {
     const userData = await UserModel.findOne({ username: { $regex: regexUsername } });
