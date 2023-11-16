@@ -8,16 +8,16 @@ export const getTicket = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId});
-        if(!project){ return res.status(404).json('No project found');};
+        if(!project){ return res.status(404).json('No Project Found.');};
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not A Member of Project.'); };
 
         const ticket = project.tickets.find( ticket => ticket._id.toString() === ticketId);
-        if(!ticket){ return res.status(404).json('No ticket found');}
+        if(!ticket){ return res.status(404).json('No Ticket Found.');}
 
         res.status(200).json(ticket);
     } catch (error) {
@@ -34,13 +34,13 @@ export const createTicket = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
-        if(!project){ return res.status(404).json('No project found')};
+        if(!project){ return res.status(404).json('No Project Found.')};
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not A Member of Project.'); };
 
         project.lastUpdate = currentDate;
         
@@ -58,7 +58,7 @@ export const createTicket = async (req, res) => {
         
         await project.save();
 
-        res.status(200).json("Ticket Created");
+        res.status(200).json("Ticket Created.");
     } catch (error) {
         res.status(400).json(error.message);
     }
@@ -73,16 +73,16 @@ export const updateTicket = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try {
         const project = await ProjectModel.findOne({ "_id": projectId });
-        if (!project) { return res.status(404).json('No project found'); }
+        if (!project) { return res.status(404).json('No Project Found.'); }
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not A Member of Project.'); };
 
         let index = project.tickets.findIndex(ticket => ticket._id.toString() === ticketId);
-        if (index < 0) { return res.status(404).json('No ticket found'); }
+        if (index < 0) { return res.status(404).json('No Ticket Found.'); }
 
         let ticket = project.tickets[index];
         ticket.description = description;
@@ -116,13 +116,13 @@ export const deleteTicket = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
-        if(!project){ return res.status(404).json('No project found')};
+        if(!project){ return res.status(404).json('No Project Found.')};
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not A Member of Project.'); };
 
         project.lastUpdate = currentDate;
 
@@ -134,7 +134,7 @@ export const deleteTicket = async (req, res) => {
 
         await project.save();
 
-        res.status(200).json("Ticket Deleted");
+        res.status(200).json("Ticket Deleted.");
     } catch (error) {
         res.status(400).json(error.message);
     }
@@ -149,18 +149,18 @@ export const createTicketComment = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try { 
         const project = await ProjectModel.findOne({ _id: projectId });
-        if(!project){ return res.status(404).json('No project found')};
+        if(!project){ return res.status(404).json('No Project Found.')};
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not A Member of Project.'); };
 
         project.lastUpdate = currentDate;
 
         let ticket = project.tickets.find(ticket => ticket._id.toString() === ticketId);
-        if(!ticket){ return res.status(404).json('No ticket found')};
+        if(!ticket){ return res.status(404).json('No Ticket Found.')};
 
         const commentData = { comment: comment, date: currentDate, user: user.username, edited: false, userAvatar: user.avatar }
         ticket.comments.unshift(commentData);
@@ -183,21 +183,21 @@ export const updateTicketComment = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try { 
         const project = await ProjectModel.findOne({ _id: projectId });
-        if(!project){ return res.status(404).json('No project found')};
+        if(!project){ return res.status(404).json('No Project Found.')};
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not A Member of Project.'); };
 
         project.lastUpdate = currentDate;
 
         const ticket = project.tickets.find(ticket => ticket._id.toString() === ticketId);
-        if(!ticket){ return res.status(404).json('No ticket found')};
+        if(!ticket){ return res.status(404).json('No Ticket Found.')};
 
         let ticketComment = ticket.comments.find(comment => comment._id.toString() === commentId);
-        if(!ticketComment){ return res.status(404).json('No comment found')};
+        if(!ticketComment){ return res.status(404).json('No Comment Found.')};
 
         ticket.lastUpdate = currentDate;
         ticketComment.comment = comment;
@@ -219,18 +219,18 @@ export const deleteTicketComment = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try { 
         const project = await ProjectModel.findOne({ _id: projectId });
-        if(!project){ return res.status(404).json('No project found')};
+        if(!project){ return res.status(404).json('No Project Found.')};
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(401).json('Not A Member of Project.'); };
 
         project.lastUpdate = currentDate;
 
         let ticket = project.tickets.find(ticket => ticket._id.toString() === ticketId);
-        if(!ticket){ return res.status(404).json('No ticket found')};
+        if(!ticket){ return res.status(404).json('No Ticket Found.')};
 
         ticket.comments = ticket.comments.filter(comment => comment._id.toString() !== commentId);
         

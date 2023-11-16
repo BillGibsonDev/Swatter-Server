@@ -10,7 +10,7 @@ export const createTokens = (user) => {
       avatar: user.avatar
     },
     `${process.env.NODE_ENV_JWT_SECRET}`,
-    { expiresIn: '16h' }
+    { expiresIn: '4h' }
   );
   return accessToken;
 };
@@ -38,7 +38,7 @@ export const validateToken = async (req, res) => {
     if (!validToken) { return res.status(400).json('No valid token provided'); };
 
     const userData = await UserModel.findById(validToken.id);
-    if(!userData){ return res.status(400).json('User does not exist')};
+    if(!userData){ return res.status(400).json('User Does Not Exist.')};
     
     if (userData.token !== tokenAuth) { return res.status(400).json({ error: 'Token is not valid' }); };
 

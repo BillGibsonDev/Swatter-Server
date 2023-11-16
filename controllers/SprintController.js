@@ -8,16 +8,16 @@ export const getSprint = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
-        if(!project){ return res.status(400).json('No project found')};
+        if(!project){ return res.status(400).json('No Project Found.')};
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not A Member of Project.'); };
 
 
         const sprint = project.sprints.find(sprint => sprint._id.toString() === sprintId);
-        if(!sprint){ return res.status(400).json('No sprint found')};
+        if(!sprint){ return res.status(400).json('No Sprint Found.')};
 
         res.status(200).json(sprint);
     } catch (error) {
@@ -34,12 +34,12 @@ export const createSprint = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try {
         const project = await ProjectModel.findOne({ _id: projectId });
-        if(!project){ return res.status(400).json('No project found')};
+        if(!project){ return res.status(400).json('No Project Found.')};
          const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not A Member of Project.'); };
 
 
         let sprintData = { createdBy: user.username, goal, title, deadline, status, color, updated: currentDate,}
@@ -52,7 +52,7 @@ export const createSprint = async (req, res) => {
 
         await project.save();
 
-        res.status(200).json(`${title} created`);
+        res.status(200).json(`${title} Created.`);
     } catch (error) {
         res.status(409).json(error.message);
     }
@@ -67,12 +67,12 @@ export const updateSprint = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try {
         const project = await ProjectModel.findOne({ "_id": projectId });
-        if(!project){ return res.status(400).json('No project found')};
+        if(!project){ return res.status(400).json('No Project Found.')};
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not A Member of Project.'); };
 
         project.lastUpdate = currentDate;
 
@@ -117,13 +117,13 @@ export const deleteSprint = async (req, res) => {
     const token = req.headers.authorization;
     const user = await validateUser(token);
 
-    if (!user) { return res.status(400).json('No valid token providied'); };
+    if (!user) { return res.status(400).json('No Valid Token Provided.'); };
     try {
         const project =  await ProjectModel.findOne({ _id: projectId });
-        if(!project){ return res.status(400).json('No project found')};
+        if(!project){ return res.status(400).json('No Project Found.')};
 
         const memberIds = project.members.map(member => member.memberId);
-        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not a member of project'); };
+        if(!memberIds.includes(user.id) && user.id !== project.ownerId ){ return res.status(400).json('Not A Member of Project.'); };
 
         project.lastUpdate = currentDate;
 
