@@ -35,12 +35,12 @@ export const validateToken = async (req, res) => {
 
   try {
     const validToken = jwt.verify(tokenAuth, process.env.NODE_ENV_JWT_SECRET);
-    if (!validToken) { return res.status(400).json('No valid token provided'); };
+    if (!validToken) { return res.status(400).json('No Valid Token Provided.'); };
 
     const userData = await UserModel.findById(validToken.id);
     if(!userData){ return res.status(400).json('User Does Not Exist.')};
     
-    if (userData.token !== tokenAuth) { return res.status(400).json({ error: 'Token is not valid' }); };
+    if (userData.token !== tokenAuth) { return res.status(400).json({ error: 'Token is Not Valid.' }); };
 
     const token = createTokens(userData);
     userData.token = token;
@@ -54,6 +54,6 @@ export const validateToken = async (req, res) => {
       return 'Token expired:', error.message;
     }
     console.log(error)
-    res.status(403).json({ error: 'Token invalid'});
+    res.status(403).json({ error: 'Token Invalid.'});
   }
 };
