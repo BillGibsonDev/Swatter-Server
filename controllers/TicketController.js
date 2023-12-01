@@ -47,7 +47,7 @@ export const createTicket = async (req, res) => {
         function generateKey() {
             const min = 1000;
             const max = 9999;
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+            return `#${Math.floor(Math.random() * (max - min + 1)) + min}`;
         }
 
         let data = { title, description, date: currentDate, status, assigned, author: user.username, priority, tag, images, sprint, lastUpdate: null, key: generateKey(), link };
