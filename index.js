@@ -42,5 +42,3 @@ const backupProjectsJob = new CronJob("0 * * * *", () => {
 );
 
 backupProjectsJob.start();
-
-backupProjects()
