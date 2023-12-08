@@ -37,6 +37,8 @@ export const validateToken = async (req, res) => {
     const validToken = jwt.verify(tokenAuth, process.env.NODE_ENV_JWT_SECRET);
     if (!validToken) { return res.status(400).json('No Valid Token Provided.'); };
 
+    if(validToken.id !== userId){ return res.status(401).json('Token Does Not Match User.')}
+
     const userData = await UserModel.findById(validToken.id);
     if(!userData){ return res.status(400).json('User Does Not Exist.')};
     
