@@ -34,6 +34,7 @@ const TicketSchema = new mongoose.Schema({
     sprint: String,
     key: String,
     link: String,
+    appraisal: String,
     comments: [{type: TicketCommentSchema, ref: 'ticketComment'}],
 })
 

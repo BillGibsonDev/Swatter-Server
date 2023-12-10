@@ -26,7 +26,7 @@ export const getTicket = async (req, res) => {
 };
 
 export const createTicket = async (req, res) => {
-    const { title, assigned, description, status, priority, tag, images, sprint, link } = req.body;
+    const { title, assigned, description, status, priority, tag, images, sprint, link, appraisal } = req.body;
     const { projectId } = req.params;
 
     const currentDate = new Date();
@@ -50,7 +50,7 @@ export const createTicket = async (req, res) => {
             return `#${Math.floor(Math.random() * (max - min + 1)) + min}`;
         }
 
-        let data = { title, description, date: currentDate, status, assigned, author: user.username, priority, tag, images, sprint, lastUpdate: null, key: generateKey(), link };
+        let data = { title, description, date: currentDate, status, assigned, author: user.username, priority, tag, images, sprint, lastUpdate: null, key: generateKey(), link, appraisal };
         project.tickets.unshift(data);
 
         let activity = { activity: `created ticket ${title}`, date: currentDate, user: user.username };
@@ -66,7 +66,7 @@ export const createTicket = async (req, res) => {
 
 export const updateTicket = async (req, res) => {
     const { projectId, ticketId } = req.params;
-    const { description, status, priority, tag, sprint, images, assigned, link } = req.body;
+    const { description, status, priority, tag, sprint, images, assigned, link, appraisal} = req.body;
     
     const currentDate = new Date();
 
@@ -94,6 +94,7 @@ export const updateTicket = async (req, res) => {
         ticket.lastUpdate = currentDate;
         ticket.assigned = assigned;
         ticket.link = link;
+        ticket.appraisal = appraisal;
 
         project.lastUpdate = currentDate;
 
