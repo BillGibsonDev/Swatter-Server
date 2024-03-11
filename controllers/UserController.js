@@ -256,3 +256,16 @@ export const deleteAccount = async (req, res) =>{
     res.status(400).json(error.message);
   }
 };
+
+export const activateServer = async (req, res) =>{
+  try {
+
+    await UserModel.findOne({ username: 'Gibby' });
+    await ProjectModel.findById(7);
+
+    res.status(200).json('Server Active');
+  }
+  catch(error){
+    res.status(400).json(error.message);
+  }
+};
